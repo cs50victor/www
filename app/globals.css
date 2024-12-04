@@ -3,7 +3,6 @@
 @theme {
   --font-family-sans: 'var(--font-manrope)', 'var(--font-inter)', serif;
   --font-family-serif: 'var(--font-cursive)', serif;
-  --font-family-mono: 'var(--font-geist-mono)', serif;
 }
 
 :root {

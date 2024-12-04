@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import { ViewTransitions } from "next-view-transitions";
 import { Analytics } from "@vercel/analytics/react";
-import { GeistMono } from "geist/font/mono";
 import localFont from "next/font/local";
 
 const inter = Inter({ subsets: ["greek", "latin-ext"], variable: "--font-inter" });
@@ -40,7 +39,7 @@ export default function RootLayout({
     <ViewTransitions>
       <html
         lang="en"
-        className={`${cursiveFont.variable} ${manrope.variable} ${inter.className} ${GeistMono.variable}`}
+        className={`${cursiveFont.variable} ${manrope.variable} ${inter.className}`}
       >
         <body className="antialiased tracking-tight">
           <div className="min-h-screen flex flex-col justify-between pt-0 md:pt-8 p-8 bg-white text-gray-900">
@@ -74,7 +73,7 @@ function Footer() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium text-zinc-700 hover:text-zinc-900 transition-colors duration-200 font-mono tracking-tighter underline underline-offset-5"
+              className="text-sm font-medium text-zinc-700 hover:text-zinc-900 transition-colors duration-200 tracking-wide underline underline-offset-5"
             >
               {link.name} ({
                 link.url.includes('linkedin.com') 
