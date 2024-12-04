@@ -37,7 +37,7 @@ const projects = [
   },
 ];
 
-export function WritingList() {
+const WritingList=()=> {
   const heroPost = writings.find(w => w.hero);
   const otherPosts = writings.filter(w => !w.hero);
 
@@ -92,10 +92,10 @@ export default function Home() {
             projects
           </a>
           <Link 
-            href="/resume"
+            href="/experience"
             className="text-zinc-700 hover:text-zinc-900 transition-colors duration-200 hover:underline underline-offset-5"
           >
-            resume
+            experience
           </Link>
         </div>
       </div>

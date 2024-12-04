@@ -11,7 +11,7 @@ async function getNoteSlugs(dir: string) {
     .map((entry) => {
       const relativePath = path.relative(
         dir,
-        path.join(entry.parentPath, entry.name)
+        path.join(entry.path, entry.name)
       );
       return path.dirname(relativePath);
     })
@@ -19,18 +19,18 @@ async function getNoteSlugs(dir: string) {
 }
 
 export default async function sitemap() {
-  const notesDirectory = path.join(process.cwd(), 'app', 'w');
-  const slugs = await getNoteSlugs(notesDirectory);
+  const writingDirectory = path.join(process.cwd(), 'app', 'w');
+  const slugs = await getNoteSlugs(writingDirectory);
 
   const notes = slugs.map((slug) => ({
     url: `https://vic.so/w/${slug}`,
     lastModified: new Date().toISOString(),
   }));
 
-  const routes = ['', '/work'].map((route) => ({
-    url: `https://vic.so{route}`,
+  const routes = ['', '/experience'].map((route) => ({
+    url: `https://vic.so${route}`,
     lastModified: new Date().toISOString(),
   }));
-
+  
   return [...routes, ...notes];
 }

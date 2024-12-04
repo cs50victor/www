@@ -5,9 +5,7 @@ import { RESUME_DATA } from "@/resume-data"
 import { tw } from "../tw"
 import { AnimatedName } from "../animated-name"
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export function Section({ className, ...props }: BadgeProps) {
+const Section=({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return <section className={tw("flex min-h-0 flex-col gap-y-3", className)} {...props} />
 }
 

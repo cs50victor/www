@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     default: "Victor A.",
     template: "%s | Victor A.",
   },
-  description: "Software engineer, optimist, community builder.",
+  description: "Software engineer. Builder.",
 };
 
 export default function RootLayout({
