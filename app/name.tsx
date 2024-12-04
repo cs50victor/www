@@ -1,10 +1,10 @@
 export function NameTransition() {
   return (
-    <h1 className="font-medium pt-12 transition-element text-2xl tracking-tighter">
+    <h1 className="font-medium pt-16 transition-element text-2xl tracking-tight">
       <span className="sr-only">Victor A.</span>
       <span aria-hidden="true" className="block overflow-hidden group relative">
         <span className="inline-block transition-all duration-300 ease-in-out group-hover:-translate-y-full">
-          {'Victor A.'.split('').map((letter, index) => (
+          {'victor atasie.'.split('').map((letter, index) => (
             <span
               key={index}
               className="inline-block"

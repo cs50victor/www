@@ -38,7 +38,7 @@ const components: MDXComponents = {
     <strong className="font-medium" {...props} />
   ),
   a: ({ href, children, ...props }: AnchorProps) => {
-    const className = 'text-blue-500 hover:text-blue-700';
+    const className = 'text-zinc-500 hover:text-zinc-700';
     if (href?.startsWith('/')) {
       return (
         <Link href={href} className={className} {...props}>

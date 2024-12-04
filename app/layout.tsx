@@ -40,7 +40,7 @@ export default function RootLayout({
     <ViewTransitions>
       <html
         lang="en"
-        className={`${cursiveFont.variable} ${manrope.variable} ${inter.variable} ${GeistMono.variable}`}
+        className={`${cursiveFont.variable} ${manrope.variable} ${inter.className} ${GeistMono.variable}`}
       >
         <body className="antialiased tracking-tight">
           <div className="min-h-screen flex flex-col justify-between pt-0 md:pt-8 p-8 bg-white text-gray-900">
@@ -74,7 +74,7 @@ function Footer() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors duration-200 font-mono tracking-tighter underline underline-offset-5"
+              className="text-sm font-medium text-zinc-700 hover:text-zinc-900 transition-colors duration-200 font-mono tracking-tighter underline underline-offset-5"
             >
               {link.name} ({
                 link.url.includes('linkedin.com') 

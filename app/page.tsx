@@ -47,7 +47,7 @@ export function WritingList() {
         <Link href={heroPost.slug} className="group">
           <div className="border-b border-gray-200 py-4 px-1 hover:bg-gray-50 hover:rounded-lg transition-all duration-200">
             <div className="flex items-center justify-between">
-              <h4 className="text-lg font-medium group-hover:text-blue-600">
+              <h4 className="text-lg font-medium group-hover:text-zinc-600">
                 {heroPost.title}
               </h4>
               <span className="text-sm text-gray-500">{heroPost.date}</span>
@@ -64,7 +64,7 @@ export function WritingList() {
           <li key={idx}>
             <Link href={writing.slug} className="group">
               <div className="flex justify-between items-center px-1">
-                <span className="flex-grow text-gray-600 group-hover:text-blue-600 truncate pr-4">
+                <span className="flex-grow text-gray-600 group-hover:text-zinc-600 truncate pr-4">
                   {writing.title}
                 </span>
                 <span className="text-sm text-gray-500 group-hover:text-gray-600 flex-shrink-0">
@@ -82,25 +82,41 @@ export function WritingList() {
 export default function Home() {
   return (
     <>
-      <NameTransition />
+      <div className="flex justify-between">
+        <NameTransition />
+        <div className="space-x-3">
+          <a 
+            href="#projects"
+            className="text-zinc-700 hover:text-zinc-900 transition-colors duration-200 hover:underline underline-offset-5"
+          >
+            projects
+          </a>
+          <Link 
+            href="/resume"
+            className="text-zinc-700 hover:text-zinc-900 transition-colors duration-200 hover:underline underline-offset-5"
+          >
+            resume
+          </Link>
+        </div>
+      </div>
       <p>
         I'm a software engineer working at {" "}
         <a
           href="https://www.linkedin.com/in/vicdotso"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-700 hover:text-blue-900 transition-colors duration-200 underline underline-offset-5"
+          className="text-zinc-700 hover:text-zinc-900 transition-colors duration-200 underline underline-offset-5"
         >
           Open Interpreter
         </a>
         , building more intuitive / accessible ways to interact with computers by leveraging AI.
-        I'm also pursuing a Masters in Data Science.
+        Also pursuing a Masters in Data Science.
       </p>
       <div className="mb-20">
         <h2 className="font-medium">Writing</h2>
         <WritingList />
       </div>
-      <div>
+      <div id="projects">
         <h3 className="font-medium">Some Cool Projects</h3>
         <ul className="divide-y divide-gray-200 my-2 list-disc">
           {projects.map((project, index) => (
@@ -125,7 +141,7 @@ export default function Home() {
               <div className="flex-1">
                 <a
                   href={project.url}
-                  className="font-medium text-blue-700 hover:text-blue-900"
+                  className="font-medium text-zinc-700 hover:text-zinc-900"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
