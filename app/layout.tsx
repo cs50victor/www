@@ -1,22 +1,19 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
-import { ViewTransitions } from "next-view-transitions";
+import { unstable_ViewTransition as ViewTransitions } from 'react';
 import { Analytics } from "@vercel/analytics/react";
-import localFont from "next/font/local";
+import { GeistSans } from 'geist/font/sans';
+import { IBM_Plex_Sans } from 'next/font/google';
 
-const inter = Inter({ subsets: ["greek", "latin-ext"], variable: "--font-inter" });
-
-const manrope = Manrope({
-  subsets: ["greek", "latin-ext"],
-  variable: "--font-manrope",
+const ibmPlexSans = IBM_Plex_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-ibm',
+  weight: ['400', '500', '600', '700']
 });
 
-const cursiveFont = localFont({
-  src: "./AdobeTextPro-Regular.woff2",
-  variable: "--font-cursive",
-  // display: 'swap',
-});
+const geist = GeistSans;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://vic.so"),
@@ -39,7 +36,7 @@ export default function RootLayout({
     <ViewTransitions>
       <html
         lang="en"
-        className={`${cursiveFont.variable} ${manrope.variable} ${inter.className}`}
+        className={`${ibmPlexSans.variable} ${geist.variable}`}
       >
         <body className="antialiased tracking-tight">
           <div className="min-h-screen flex flex-col justify-between pt-0 md:pt-8 p-8 bg-white text-gray-900">
@@ -57,7 +54,7 @@ export default function RootLayout({
 
 function Footer() {
   const links = [
-    { name: "twitter", url: "https://x.com/vic8or" },
+    { name: "twitter", url: "https://twitter.com/vicdotso" },
     // { name: 'youtube', url: 'https://www.youtube.com/@vicdotso' },
     { name: "linkedin", url: "https://www.linkedin.com/in/vicdotso" },
     { name: "github", url: "https://github.com/cs50victor" },
@@ -96,3 +93,4 @@ function Footer() {
 // https://www.0de5.net/explore
 // https://rauchg.com/
 // https://www.shel.win/
+// https://www.cpu.land/

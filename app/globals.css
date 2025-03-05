@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-family-sans: 'var(--font-manrope)', 'var(--font-inter)', serif;
-  --font-family-serif: 'var(--font-cursive)', serif;
+  --font-family-sans: 'var(--font-geist)', sans-serif;
+  --font-family-serif: 'var(--font-ibm)', serif;
 }
 
 :root {

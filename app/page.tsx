@@ -1,7 +1,7 @@
 import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
 import { NameTransition } from "./name";
 import { writings } from "./_w";
-import { Link } from "next-view-transitions";
+import Link from 'next/link';
 
 // update later to have a picture / gif / video along with a description
 const projects = [
