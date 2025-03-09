@@ -2,7 +2,6 @@
 
 import { motion } from 'motion/react'
 import { XIcon } from 'lucide-react'
-import { Spotlight } from '@/components/ui/spotlight'
 import { Magnetic } from '@/components/ui/magnetic'
 import {
   MorphingDialog,
@@ -15,7 +14,7 @@ import Link from 'next/link'
 import { AnimatedBackground } from '@/components/ui/animated-background'
 import { PROJECTS, WORK_EXPERIENCE, SOCIAL_LINKS, ABOUT } from '@/lib/constants'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { CursorText } from '@/components/cursor-text'
 import { InfiniteSlider } from '@/components/motion-primitives/infinite-slider'
 import { ALL_WRITINGS } from './_w'
@@ -125,14 +124,20 @@ function MagneticSocialLink({
 
 export default function HomePage() {
   return (
-    <motion.main
-      variants={VARIANTS_CONTAINER}
-      className='mt-30 mb-40 overflow-x-clip'
-      initial="hidden"
-      animate="visible"
+    <Suspense
+      fallback={(
+        <div className='animate-pulse'></div>
+      )}
     >
-      <AnimatedTabsHover />
-    </motion.main>
+      <motion.main
+        variants={VARIANTS_CONTAINER}
+        className='mt-30 mb-40 overflow-x-clip'
+        initial="hidden"
+        animate="visible"
+      >
+        <AnimatedTabsHover />
+      </motion.main>
+    </Suspense>
   )
 }
 
