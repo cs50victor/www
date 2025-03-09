@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 
-interface Writing {
+export interface WritingPost {
   slug: string;
   title: string;
   description: string;
@@ -17,7 +17,7 @@ async function generateWritings() {
     withFileTypes: true 
   });
 
-  const writings: Writing[] = [];
+  const writings: WritingPost[] = [];
 
   for (const entry of entries) {
     if (entry.isFile() && entry.name === 'page.mdx') {
@@ -33,7 +33,7 @@ async function generateWritings() {
       if (titleMatch && descriptionMatch && dateMatch) {
         const relativePath = path.relative(writingsDir, entry.path);
         writings.push({
-          slug: `w/${relativePath}`.replace(/\\/g, '/'),
+          slug: `/w/${relativePath}`.replace(/\\/g, '/'),
           title: titleMatch[1],
           description: descriptionMatch[1],
           date: dateMatch[1],
@@ -53,7 +53,7 @@ async function generateWritings() {
   }
 
   const fileContent = `// This file is auto-generated. Do not edit it manually.
-export const writings = ${JSON.stringify(writings, null, 2)} as const;
+export const ALL_WRITINGS = ${JSON.stringify(writings, null, 2)} as const;
 `;
 
   await fs.writeFile(

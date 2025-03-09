@@ -1,167 +1,344 @@
-import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
-import { NameTransition } from "./name";
-import { writings } from "./_w";
-import Link from 'next/link';
+'use client'
 
-// update later to have a picture / gif / video along with a description
-const projects = [
-  {
-    title: "kitt2",
-    url: "https://github.com/cs50victor/kitt2",
-    media: "https://github.com/cs50victor/kitt2/assets/52110451/ef2f8b61-6870-4e44-8718-0f92ef90cefc",
-    type: "video",
-    description:
-      "Real-time multimodal AI communication system using LiveKit. Renders 3D models into live video streams, enabling interactive AI avatars. Built with TypeScript and Python for the backend streaming capabilities.",
-  },
-  {
-    title: "buildspace ai",
-    url: "https://github.com/cs50victor/buildspace",
-    media: "https://github.com/cs50victor/buildspace/assets/52110451/2a0e0750-e21e-4aa9-b856-0a7f7fb9c3b8",
-    type: "video",
-    description:
-      "An AI-powered discovery platform for buildspace community members. Built using Rust for high-performance video transcription, it indexes over 300 builder profiles and their YouTube content. Features real-time conversational UI powered by LiveKit to help users find relevant connections and get AI-assisted responses backed by community data.",
-  },
-  {
-    title: "newmedia",
-    url: "https://github.com/cs50victor/newmedia",
-    media: "https://images.unsplash.com/photo-1645526407847-52de201945f2?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    description:
-      "High-performance graphics engine built with Rust and Bevy for ML-powered image and video generation. Implements gaussian splatting for real-time rendering and streams frames via WebSocket. Focuses on realistic camera features and real-time audio lip-sync capabilities.",
-  },
-  {
-    title: "pr_dedupe",
-    url: "https://github.com/cs50victor/pr_dedupe",
-    media: "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?q=80&w=2088&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    description:
-      "GitHub Action that uses on-device code embedding to detect duplicate/similar pull requests. Helps open source maintainers automatically identify and manage redundant contributions by analyzing PR diffs using ML embeddings, all running directly on GitHub CI runners.",
-  },
-];
+import { motion } from 'motion/react'
+import { XIcon } from 'lucide-react'
+import { Spotlight } from '@/components/ui/spotlight'
+import { Magnetic } from '@/components/ui/magnetic'
+import {
+  MorphingDialog,
+  MorphingDialogTrigger,
+  MorphingDialogContent,
+  MorphingDialogClose,
+  MorphingDialogContainer,
+} from '@/components/ui/morphing-dialog'
+import Link from 'next/link'
+import { AnimatedBackground } from '@/components/ui/animated-background'
+import { PROJECTS, WORK_EXPERIENCE, SOCIAL_LINKS, ABOUT } from '@/lib/constants'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
+import { CursorText } from '@/components/cursor-text'
+import { InfiniteSlider } from '@/components/motion-primitives/infinite-slider'
+import { ALL_WRITINGS } from './_w'
 
-const WritingList=()=> {
-  const heroPost = writings.find(w => w.hero);
-  const otherPosts = writings.filter(w => !w.hero);
-
-  return (
-    <div className="mt-4">
-      {heroPost && (
-        <Link href={heroPost.slug} className="group">
-          <div className="border-b border-gray-200 py-4 px-1 hover:bg-gray-50 hover:rounded-lg transition-all duration-200">
-            <div className="flex items-center justify-between">
-              <h4 className="text-lg font-medium group-hover:text-zinc-600">
-                {heroPost.title}
-              </h4>
-              <span className="text-sm text-gray-500">{heroPost.date}</span>
-            </div>
-            {heroPost.description && (
-              <p className="text-gray-600 text-sm mt-1">{heroPost.description}</p>
-            )}
-          </div>
-        </Link>
-      )}
-      
-      <ul className="list-disc pl-4 mt-4 space-y-2">
-        {otherPosts.map((writing, idx) => (
-          <li key={idx}>
-            <Link href={writing.slug} className="group">
-              <div className="flex justify-between items-center px-1">
-                <span className="flex-grow text-gray-600 group-hover:text-zinc-600 truncate pr-4">
-                  {writing.title}
-                </span>
-                <span className="text-sm text-gray-500 group-hover:text-gray-600 flex-shrink-0">
-                  {writing.date}
-                </span>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+const VARIANTS_CONTAINER = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
 }
 
-export default function Home() {
+const VARIANTS_SECTION = {
+  hidden: { opacity: 0, y: 20, filter: 'blur(8px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)' },
+}
+
+const TRANSITION_SECTION = {
+  duration: 0.3,
+}
+
+type ProjectVideoProps = {
+  src: string
+}
+
+function ProjectVideo({ src }: ProjectVideoProps) {
   return (
-    <>
-      <div className="flex justify-between">
-        <NameTransition />
-        <div className="space-x-3">
-          <a 
-            href="#projects"
-            className="text-zinc-700 hover:text-zinc-900 transition-colors duration-200 hover:underline underline-offset-5"
-          >
-            projects
-          </a>
-          <Link 
-            href="/experience"
-            className="text-zinc-700 hover:text-zinc-900 transition-colors duration-200 hover:underline underline-offset-5"
-          >
-            experience
-          </Link>
-        </div>
-      </div>
-      <p>
-        I'm a software engineer working at {" "}
-        <a
-          href="https://www.linkedin.com/in/vicdotso"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-zinc-700 hover:text-zinc-900 transition-colors duration-200 underline underline-offset-5"
+    <MorphingDialog
+      transition={{
+        type: 'spring',
+        bounce: 0,
+        duration: 0.3,
+      }}
+    >
+      <MorphingDialogTrigger>
+        <video
+          src={src}
+          autoPlay
+          loop
+          muted
+          className="aspect-video w-full cursor-zoom-in rounded-xl"
+        />
+      </MorphingDialogTrigger>
+      <MorphingDialogContainer>
+        <MorphingDialogContent className="relative aspect-video rounded-2xl bg-zinc-50 p-1 ring-1 ring-zinc-200/50 ring-inset dark:bg-zinc-950 dark:ring-zinc-800/50">
+          <video
+            src={src}
+            autoPlay
+            loop
+            muted
+            className="aspect-video h-[50vh] w-full rounded-xl md:h-[70vh]"
+          />
+        </MorphingDialogContent>
+        <MorphingDialogClose
+          className="fixed top-6 right-6 h-fit w-fit rounded-full bg-white p-1"
+          variants={{
+            initial: { opacity: 0 },
+            animate: {
+              opacity: 1,
+              transition: { delay: 0.3, duration: 0.1 },
+            },
+            exit: { opacity: 0, transition: { duration: 0 } },
+          }}
         >
-          Open Interpreter
-        </a>
-        , building more intuitive / accessible ways to interact with computers by leveraging AI.
-        Also pursuing a Masters in Data Science.
-      </p>
-      <div className="mb-20">
-        <h2 className="font-medium">Writing</h2>
-        <WritingList />
-      </div>
-      <div id="projects">
-        <h3 className="font-medium">Some Cool Projects</h3>
-        <ul className="divide-y divide-gray-200 my-2 list-disc">
-          {projects.map((project, index) => (
-            <li key={index} className="py-6 flex space-x-3">
-              <div className="w-40 h-30 flex-shrink-0 overflow-hidden rounded-md">
-                {(project.media.endsWith(".mp4") || project?.type === "video") ? (
-                  <video
-                    src={project.media}
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    muted
-                    loop
-                  />
-                ) : (
-                  <img
-                    src={project.media}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </div>
-              <div className="flex-1">
-                <a
-                  href={project.url}
-                  className="font-medium text-zinc-700 hover:text-zinc-900"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {project.title}
-                </a>
-                <p className="text-gray-600 text-sm">
-                  {project.description}
-                </p>
-              </div>
-            </li>
+          <XIcon className="h-5 w-5 text-zinc-500" />
+        </MorphingDialogClose>
+      </MorphingDialogContainer>
+    </MorphingDialog>
+  )
+}
+
+function MagneticSocialLink({
+  children,
+  link,
+}: {
+  children: React.ReactNode
+  link: string
+}) {
+  return (
+    <Magnetic springOptions={{ bounce: 0 }} intensity={0.3}>
+      <a
+        href={link}
+        className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full px-2.5 py-1 text-sm transition-colors duration-200 hover:underline"
+      >
+        {children}
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 15 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-3 w-3"
+        >
+          <path
+            d="M3.64645 11.3536C3.45118 11.1583 3.45118 10.8417 3.64645 10.6465L10.2929 4L6 4C5.72386 4 5.5 3.77614 5.5 3.5C5.5 3.22386 5.72386 3 6 3L11.5 3C11.6326 3 11.7598 3.05268 11.8536 3.14645C11.9473 3.24022 12 3.36739 12 3.5L12 9.00001C12 9.27615 11.7761 9.50001 11.5 9.50001C11.2239 9.50001 11 9.27615 11 9.00001V4.70711L4.35355 11.3536C4.15829 11.5488 3.84171 11.5488 3.64645 11.3536Z"
+            fill="currentColor"
+            fillRule="evenodd"
+            clipRule="evenodd"
+          ></path>
+        </svg>
+      </a>
+    </Magnetic>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <motion.main
+      variants={VARIANTS_CONTAINER}
+      className='mt-30 mb-40 overflow-x-clip'
+      initial="hidden"
+      animate="visible"
+    >
+      <AnimatedTabsHover />
+    </motion.main>
+  )
+}
+
+function AnimatedTabsHover() {
+  const TABS = ['About', 'Projects', 'Writing', 'Experience', 'Contact'];
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get('tab') || TABS[0];
+  
+  const handleTabClick = (tab:string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', tab);
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
+  useEffect(() => {
+    if (!searchParams.has('tab')) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('tab', TABS[0]);
+      router.push(`?${params.toString()}`, { scroll: false });
+    }
+  }, []);
+
+  return (
+    <div className='w-full'>
+      <div className='flex justify-center mb-12'>
+        <AnimatedBackground
+          defaultValue={activeTab}
+          className='rounded-lg bg-zinc-100 dark:bg-zinc-800'
+          transition={{
+            type: 'spring',
+            bounce: 0.2,
+            duration: 0.3,
+          }}
+          enableHover
+        >
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              data-id={tab}
+              type='button'
+              className={`px-4 py-1.5 tracking-tight transition-colors duration-300 ${
+                activeTab === tab 
+                  ? 'text-zinc-950 dark:text-zinc-50 font-medium'
+                  : 'text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50'
+              }`}
+              onClick={() => handleTabClick(tab)}
+            >
+              {tab}
+            </button>
           ))}
-        </ul>
-        <a
-          href="https://github.com/cs50victor"
-          className="lowercase flex items-center text-gray-600 hover:text-gray-800"
-          // className="text-sm text-gray-600 hover:text-gray-800 mt-4 inline-block"
-        >
-          See more on GitHub <ArrowUpRightIcon className="h-4 w-4 ml-1" />
-        </a>
+        </AnimatedBackground>
       </div>
-    </>
+      
+      {activeTab === 'About' && (
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          key="about-section"
+          transition={TRANSITION_SECTION}
+          className='dark:text-foreground/70 leading-6 max-w-4/6 mx-auto'
+        >
+          <CursorText text={ABOUT} />
+        </motion.section>
+      )}
+      
+      {activeTab === 'Projects' && (
+        <motion.section
+          variants={VARIANTS_SECTION}
+          initial="hidden"
+          animate="visible"
+          transition={TRANSITION_SECTION}
+          key="projects-section"
+        >
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {PROJECTS.map((project) => (
+              <div key={project.name} className="space-y-2">
+                <div className="relative rounded-2xl bg-zinc-50/40 p-1 ring-1 ring-zinc-200/50 ring-inset dark:bg-zinc-950/40 dark:ring-zinc-800/50">
+                  <ProjectVideo src={project.video} />
+                </div>
+                <div className="px-1">
+                  <a
+                    className="font-base group relative inline-block font-[450] text-zinc-900 dark:text-zinc-50"
+                    href={project.link}
+                    target="_blank"
+                  >
+                    {project.name}
+                    <span className="absolute bottom-0.5 left-0 block h-[1px] w-full max-w-0 bg-zinc-900 transition-all duration-200 group-hover:max-w-full"></span>
+                  </a>
+                  <p className="text-base text-zinc-600 dark:text-zinc-400">
+                    {project.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.section>
+      )}
+      
+      {activeTab === 'Writing' && (
+        <motion.section
+          variants={VARIANTS_SECTION}
+          initial="hidden"
+          animate="visible"
+          transition={TRANSITION_SECTION}
+          key="writing-section"
+        >
+          <div className="flex flex-col space-y-0  ml-16">
+            <p className='max-w-9/12 mb-6 mx-auto text-foreground/70'>
+              <q>If you're thinking without writing, you only think you're thinking.</q>
+              <br />
+              - <cite>Leslie Lamport</cite>
+            </p>
+            <AnimatedBackground
+              enableHover
+              className="h-full w-full rounded-lg bg-foreground/5 goup-hover"
+              transition={{
+                type: 'spring',
+                bounce: 0,
+                duration: 0.2,
+              }}
+            >
+              {ALL_WRITINGS.map((post, i) => (
+                <Link
+                  key={`w-${i}`}
+                  className="writing item-mx-3 block rounded-xl px-3 py-3 group"
+                  href={post.slug}
+                  data-id={`w-${i}`}
+                >
+                  <div className="flex flex-col space-y-1">
+                    <div>
+                      <span className='inline-block mr-2'>{i+1}. </span>
+                      <h4 className="inline-block font-normal">{post.title}</h4>
+                    </div>
+                    <p className="text-zinc-500 dark:text-zinc-400">{post.description}</p>
+                  </div>
+                </Link>
+              ))}
+            </AnimatedBackground>
+          </div>
+        </motion.section>
+      )}
+      
+      {activeTab === 'Experience' && (
+        <motion.section
+          variants={VARIANTS_SECTION}
+          initial="hidden"
+          animate="visible"
+          transition={TRANSITION_SECTION}
+          key="experience-section"
+        >
+          <div className="flex flex-col space-y-3 max-w-9/12 mx-auto">
+            <div className='mb-10'>
+              <InfiniteSlider speedOnHover={20} gap={24}>
+                {WORK_EXPERIENCE.map(({img_src, company}, index) => (
+                  <img
+                    key={index}
+                    src={img_src}
+                    alt={company}
+                    className='aspect-square w-[120px] rounded-[4px] object-cover'
+                  />
+                ))}
+              </InfiniteSlider>
+            </div>
+            {WORK_EXPERIENCE.map(({link, title, company, achievement_summary, start, end}, i) => (
+              <a
+                className="relative overflow-hidden p-[1px] border-b hover:bg-foreground/5 hover:rounded-xl"
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                key={i}
+              >
+                <div className="relative h-full w-full rounded-[15px] p-2">
+                  <div className="relative flex w-full flex-row justify-between">
+                    <div>
+                      <h4 className='mb-2 text-lg tracking-tighter'>{title}</h4>
+                      <p>{company}</p>
+                      {achievement_summary && <p className='mt-4 text-sm text-foreground/70 lowercase'>{achievement_summary}</p>}
+                    </div>
+                    <p className='text-sm lowercase'>{start} - {end}</p>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </motion.section>
+      )}
+      
+      {activeTab === 'Contact' && (
+        <motion.section
+          variants={VARIANTS_SECTION}
+          initial="hidden"
+          animate="visible"
+          transition={TRANSITION_SECTION}
+          key="contact-section"
+          className='max-w-3/6 mx-auto'
+        >
+          <div className="flex items-center justify-start space-x-3">
+            {SOCIAL_LINKS.map((link) => (
+              <MagneticSocialLink key={link.label} link={link.link}>
+                {link.label}
+              </MagneticSocialLink>
+            ))}
+          </div>
+        </motion.section>
+      )}
+    </div>
   );
 }
