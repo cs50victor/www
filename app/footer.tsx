@@ -64,7 +64,7 @@ export function Footer() {
   return (
     <footer className="absolute bottom-0 left-1/2 mx-auto py-6">
       <div className="flex items-center justify-center w-full">
-        <div className="text-xs text-zinc-400 border rounded-full px-1 py-0.5">
+        <div className="text-xs text-zinc-400 border rounded-full">
           <ThemeSwitch />
         </div>
       </div>

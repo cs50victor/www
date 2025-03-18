@@ -163,7 +163,7 @@ function AnimatedTabsHover() {
 
   return (
     <div className='w-full'>
-      <div className='flex justify-center mb-12'>
+      <div className='flex justify-between mb-12'>
         <AnimatedBackground
           defaultValue={activeTab}
           className='rounded-lg bg-zinc-100 dark:bg-zinc-800'
@@ -245,7 +245,7 @@ function AnimatedTabsHover() {
           transition={TRANSITION_SECTION}
           key="writing-section"
         >
-          <div className="flex flex-col space-y-0  ml-16">
+          <div className="flex flex-col space-y-0">
             <p className='max-w-9/12 mb-6 mx-auto text-foreground/70'>
               <q>If you're thinking without writing, you only think you're thinking.</q>
               <br />
@@ -297,7 +297,7 @@ function AnimatedTabsHover() {
                     key={index}
                     src={img_src}
                     alt={company}
-                    className='aspect-square w-[120px] rounded-[4px] object-cover'
+                    className='aspect-square w-[100px] rounded-[0px] object-cover filter grayscale hover:grayscale-0'
                   />
                 ))}
               </InfiniteSlider>
@@ -313,7 +313,7 @@ function AnimatedTabsHover() {
                 <div className="relative h-full w-full rounded-[15px] p-2">
                   <div className="relative flex w-full flex-row justify-between">
                     <div>
-                      <h4 className='mb-2 text-lg tracking-tighter'>{title}</h4>
+                      <h4 className='mb-2 tracking-tighter'>{title}</h4>
                       <p>{company}</p>
                       {achievement_summary && <p className='mt-4 text-sm text-foreground/70 lowercase'>{achievement_summary}</p>}
                     </div>

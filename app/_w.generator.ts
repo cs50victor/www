@@ -21,14 +21,23 @@ async function generateWritings() {
 
   for (const entry of entries) {
     if (entry.isFile() && entry.name === 'page.mdx') {
-      const filePath = path.join(entry.path, entry.name);
+      const filePath = path.join(entry.parentPath, entry.name);
       const content = await fs.readFile(filePath, 'utf-8');
+    
+      const cleanedMetadata = (content.match(/export const metadata = \{([\s\S]*?)\};/)??[])[1];
       
-      const titleMatch = content.match(/title: ['"](.+?)['"]/);
-      const descriptionMatch = content.match(/description: ['"](.+?)['"]/);
-      const dateMatch = content.match(/date: ['"](.+?)['"]/);
-      const heroMatch = content.match(/hero: (true|false)/);
-      const tagsMatch = content.match(/tags: \[(.*?)\]/);
+      if(!cleanedMetadata) {
+        const msg = `Missing metadata in ${filePath}`;
+        console.error(msg);
+        // throw Error(msg);
+        continue;
+      }
+      
+      const titleMatch = cleanedMetadata.match(/title: ['"](.+?)['"]/);
+      const descriptionMatch = cleanedMetadata.match(/description: ['"](.+?)['"]/);
+      const dateMatch = cleanedMetadata.match(/date: ['"](.+?)['"]/);
+      const heroMatch = cleanedMetadata.match(/hero: (true|false)/);
+      const tagsMatch = cleanedMetadata.match(/tags: \[(.*?)\]/);
 
       if (titleMatch && descriptionMatch && dateMatch) {
         const relativePath = path.relative(writingsDir, entry.path);
@@ -49,6 +58,7 @@ async function generateWritings() {
 
   // If no hero is set, set the first element as hero
   if (!writings.some(w => w.hero)) {
+    console.log("writings", writings)
     writings[0].hero = true;
   }
 

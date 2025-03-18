@@ -1,0 +1,31 @@
+export const metadata = {
+  title: 'Cross-Language Harmony: Building Python & TypeScript SDKs with Rust.',
+  description: 'Creating a python and a javascript sdk using rust in one repository and some advantages of a using a lower level language as your core.',
+  tags: ["tech"],
+  hero: true,
+  date: "03/2024",
+};
+
+import bindings from "./llama-cpp-bindings.png";
+
+
+# Cross-Language Harmony: Building Python & TypeScript SDKs with Rust.
+
+Creating a python and a javascript sdk using rust in one repository and some advantages of a using a lower level language as your core.
+
+---
+
+Recently, there have been a lot of significant advancements happening in quick succession, sometimes waranting the need to integrate new sdk's into our existing codebases. Just a couple weeks into the year, we've seen th rise up mcp servers and clients, and serveral new client sdks like openai's new responses api, and the news rolled out agents-sdk. This is great news if you're already working in the programming language this new sdk if written in but more often than not I've found myself in conversations where a programming language specific fork of the sdk or a hacky way to communicate between these higher level languages has been hinted.
+
+This occurence of events remindeed me of an experiment propmted by a question posed by a friend asked a while back, "Is it possible to build a cross-language sdk using rust?". I knew it was technically possible because I've seen open source projects like [Livekit](https://github.com/livekit/rust-sdks?tab=readme-ov-file#motivation-and-design-goals), [Pydantic](https://github.com/pydantic/pydantic-core), [Tiktoken by OpenAI](https://github.com/openai/tiktoken), [Outlines](https://github.com/dottxt-ai/outlines-core) and [LlamaCpp](https://github.com/ggml-org/llama.cpp) just to name a few build a common core in languages like rust and c++ and provide bindings for python and javascript as well as many other languages.
+
+<Cover
+  src={bindings}
+  alt="llama cpp bindings"
+  caption="llama cpp bindings"
+/>
+
+
+So i started digging for resources to build a cross-language sdk using rust and shortly found that not only was it indeed possible, it was faily straightforward. Reading docs from [Napi Rs](https://napi.rs/) and [Pyo3](https://pyo3.rs/v0.24.0/) made it simple to setup individual repositories for each language binding. I first scaffolded a rust to python binding using Pyo3, which you can find here [oogway_py](https://github.com/cs50victor/oogway_py) then setup a similar project for javascript using Napi Rs, which you can find here [oogway_js](https://github.com/cs50victor/oogway_js). Now the challenge was to build a single monorepo that could be used to build bindings for both languages. There was a little friction here because of the folder strcutures required to get the different build tools working together nicely. You can take a look at the [oogway_omega](https://github.com/cs50victor/oogway_omega) repository to see how it was done. **_This was about a year ago and the build tools and apis might have changed since then._**
+
+Obviously, this isn't a perfect solution as there could be performance tradeoffs to consider when building cross-language SDKs using lower level languages like Rust, depending on the complexity of your use case but for small teams that don't have the resources to build a cross-language SDK from scratch, it is a viable approach that can be used to build high-performance, cross-language SDKs and maybe most importantly, have an easy way for developers to use the common core your sdk provides in several other languages.
