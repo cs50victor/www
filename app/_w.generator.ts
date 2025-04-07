@@ -11,7 +11,7 @@ export interface WritingPost {
 }
 
 async function generateWritings() {
-  const writingsDir = path.join(process.cwd(), 'app', 'w');
+  const writingsDir = path.join(process.cwd(), 'app', 't');
   const entries = await fs.readdir(writingsDir, { 
     recursive: true, 
     withFileTypes: true 
@@ -42,7 +42,7 @@ async function generateWritings() {
       if (titleMatch && descriptionMatch && dateMatch) {
         const relativePath = path.relative(writingsDir, entry.path);
         writings.push({
-          slug: `/w/${relativePath}`.replace(/\\/g, '/'),
+          slug: `/t/${relativePath}`.replace(/\\/g, '/'),
           title: titleMatch[1],
           description: descriptionMatch[1],
           date: dateMatch[1],

@@ -142,7 +142,7 @@ export default function HomePage() {
 }
 
 function AnimatedTabsHover() {
-  const TABS = ['About', 'Projects', 'Writing', 'Experience', 'Contact'];
+  const TABS = ['About', 'Projects', 'Thoughts', 'Experience', 'Contact'];
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || TABS[0];
@@ -237,7 +237,7 @@ function AnimatedTabsHover() {
         </motion.section>
       )}
       
-      {activeTab === 'Writing' && (
+      {activeTab === 'Thoughts' && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
