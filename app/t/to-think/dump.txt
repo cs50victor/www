@@ -1,0 +1,30 @@
+Did you work in tech?”, “no victor that is a dumb”, “Are you a software engineer”, “Did you study computer science”. I just got off a long flight and found myself struggling to say something to the person sitted next to me on a 3 hour flight. I had so many permuations of what to say but i struggled to think through what and how to share my ideas.
+
+Learning english im highschool felt a bit weird to me as a teenager. Unlike other subjects like mathatics and biology, where there was so much new and complex imformation you’re not aware of, i always wondered what the point of learning something i speak everyday. English felt like the most subjective subject when it came to grading. One you memorise the periodic table elements, or the bones in a region in the body, or practice the first principles of derivates for your test there is almost a predicatble outcome based on the effort you put it. But when it comes to writing or speaking, it seems highly dependent on the grader. Dont get me wrong it is eady to agree on a good read or to consesus agree on who a good orator is. But what makes an A grade speech or writing vs a A+ speech.  I’ve had some teachers disagree on when to use a hypen or what makes a run on sentence.
+
+So going into computer sciemce as my undergrad major i had the dream or just taking techincal classes and not javing anything to do with written assignments, boy was i shocked to get to collge and have writng and reading assignemnts in my computer science classes. It always felt like a chore and made me wonder why i was being asked to do things not really related to what i was going to be paid for after-all companies pay software engineers to write code. Right??
+
+Obviously im hindsoght this was a somewhat naive way to thinking and with the rise of code-spitting softwares aka LLMs it makes you reasses and reavalute what exactly what your role is, something im sure more junior or entru engineers have maybe compred to more experienced   Engineers who have delt with problems ouside of programming like system design, cross-team task assignemnt, communication and mangent and already to an extent have realised that the field of software enginnering is more complex.
+
+A couple of things came together in. The past couple years to revalute my intial view in writing
+
+
+in my senior year of college i was looking into and most groups or tribes that didnt communicate also using writing slowly became obsolete.
+
+writng helps you think, and think clearly. This was emphadised in paul grahams essay
+
+https://www.paulgraham.com/writes.html
+
+The essay quotes Leslie Lamport.
+
+“If you're thinking without writing, you only think you're thinking.”
+
+And to be honest i reread a couple times to let it sink in.
+
+Agter some personal reflection and retrospection it dawned on me that i spend so much time thinking or simmering partially formed thoughts and this also affects my communication or interactions with people. I’ve spent so much times with uncously practicing generating thoughts but not forcing them into a cohesive order at inference time.
+
+
+
+
+
+

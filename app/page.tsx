@@ -269,7 +269,7 @@ function AnimatedTabsHover() {
                 >
                   <div className="flex flex-col space-y-1">
                     <div>
-                      <span className='inline-block mr-2'>{i+1}. </span>
+                      <span className='inline-block mr-2'>{ALL_WRITINGS.length - i-1}. </span>
                       <h4 className="inline-block font-normal">{post.title}</h4>
                     </div>
                     <p className="text-zinc-500 dark:text-zinc-400">{post.description}</p>
