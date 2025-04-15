@@ -1,17 +1,16 @@
 import { Metadata, ResolvingMetadata } from 'next'
-import { getPostBySlug } from '@/lib/posts'
 import { notFound } from 'next/navigation'
 import fs from 'fs'
 import path from 'path'
 
-type Props = {
-  params: { slug: string }
+type Props  = {
+  params: Promise<{ slug: string }>
 }
-
 export async function generateMetadata(
-  { params }: Props,
+  { params : _params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const params = await _params;
   // Try to get metadata directly from the MDX file
   const postPath = path.join(process.cwd(), 'app/t', params.slug, 'page.mdx')
   
