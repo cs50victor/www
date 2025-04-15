@@ -6,12 +6,12 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Thoughts - Victor A.',
-  description: "Writing about tech related things I think are cool.",
+  description: "Writing about tech related things I think are interesting.",
   openGraph: {
     type: 'website',
     url: 'https://vic.so/t',
     title: 'Thoughts - Victor A.',
-    description: "Writing about tech related things I think are cool.",
+    description: "Writing about tech related things I think are interesting.",
     siteName: 'Victor A.',
   },
   twitter: { card: 'summary_large_image' },
