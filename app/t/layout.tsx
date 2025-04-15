@@ -1,32 +1,22 @@
-'use client'
-import { TextMorph } from '@/components/ui/text-morph'
 import { ScrollProgress } from '@/components/ui/scroll-progress'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import { Header } from '../header'
+import { CopyButton } from './copybutton'
+import { Metadata } from 'next'
 
-function CopyButton() {
-  const [text, setText] = useState('Copy URL')
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
-
-  useEffect(() => {
-    setTimeout(() => {
-      setText('Copy URL')
-    }, 2000)
-  }, [text])
-
-  return (
-    <button
-      onClick={() => {
-        setText('Copied URL ☑︎')
-        navigator.clipboard.writeText(currentUrl)
-      }}
-      className="font-base flex items-center gap-1 text-center text-sm transition-colors text-foreground/50"
-      type="button"
-    >
-      <TextMorph>{text}</TextMorph>
-    </button>
-  )
+export const metadata: Metadata = {
+  title: 'Thoughts - Victor A.',
+  description: "Writing about tech related things I think are cool.",
+  openGraph: {
+    type: 'website',
+    url: 'https://vic.so/t',
+    title: 'Thoughts - Victor A.',
+    description: "Writing about tech related things I think are cool.",
+    siteName: 'Victor A.',
+  },
+  twitter: { card: 'summary_large_image' },
 }
+
 
 export default function LayoutBlogPost({
   children,
