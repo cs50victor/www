@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: 'Thoughts - Victor A.',
     description: "Writing about tech related things I think are interesting.",
     siteName: 'Victor A.',
+    locale: 'en_US',
   },
   twitter: { card: 'summary_large_image' },
 }
