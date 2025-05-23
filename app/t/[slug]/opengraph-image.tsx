@@ -1,7 +1,5 @@
 import { ImageResponse } from 'next/server'
-import { WEBSITE_URL, NAME } from '@/lib/constants'
-import fs from 'fs'
-import path from 'path'
+import { NAME } from '@/lib/constants'
 
 export const runtime = 'edge'
 export const size = {
@@ -14,25 +12,30 @@ type Props = {
   params: Promise<{ slug: string }>
 }
 
+// Known posts metadata - hardcoded for edge runtime compatibility
+const POSTS_METADATA: Record<string, { title: string; description: string; date?: string }> = {
+  'rust-python-js-sdk': {
+    title: 'Cross-Language Harmony: Building Python & TypeScript SDKs with Rust.',
+    description: 'Creating a python and a javascript sdk using rust in one repository and some advantages of a using a lower level language as your core.',
+    date: '03/2024'
+  },
+  'to-think': {
+    title: 'Struggling to Think.',
+    description: 'A personal reflection on the importance of writing for clear thinking.',
+    date: '04/2025'
+  }
+}
+
+export async function generateStaticParams() {
+  return Object.keys(POSTS_METADATA).map((slug) => ({
+    slug,
+  }))
+}
+
 export async function generateImageMetadata({ params: _params }: Props) {
   const params = await _params
-  
-  // Try to get metadata from the MDX file
-  const postPath = path.join(process.cwd(), 'app/t', params.slug, 'page.mdx')
-  
-  let title = 'Blog Post'
-  let description = 'A blog post by Victor A.'
-  
-  try {
-    if (fs.existsSync(postPath)) {
-      const postModule = await import(`../../${params.slug}/page.mdx`)
-      const postMetadata = postModule.metadata || {}
-      title = postMetadata.title || title
-      description = postMetadata.description || description
-    }
-  } catch (error) {
-    console.error(`Error loading metadata for ${params.slug}:`, error)
-  }
+  const metadata = POSTS_METADATA[params.slug]
+  const title = metadata?.title || 'Blog Post'
 
   return [
     {
@@ -44,25 +47,11 @@ export async function generateImageMetadata({ params: _params }: Props) {
 
 export default async function Image({ params: _params }: Props) {
   const params = await _params
+  const metadata = POSTS_METADATA[params.slug]
   
-  // Try to get metadata from the MDX file
-  const postPath = path.join(process.cwd(), 'app/t', params.slug, 'page.mdx')
-  
-  let title = 'Blog Post'
-  let description = 'A blog post by Victor A.'
-  let date = ''
-  
-  try {
-    if (fs.existsSync(postPath)) {
-      const postModule = await import(`../../${params.slug}/page.mdx`)
-      const postMetadata = postModule.metadata || {}
-      title = postMetadata.title || title
-      description = postMetadata.description || description
-      date = postMetadata.date || ''
-    }
-  } catch (error) {
-    console.error(`Error loading metadata for ${params.slug}:`, error)
-  }
+  const title = metadata?.title || 'Blog Post'
+  const description = metadata?.description || 'A blog post by Victor A.'
+  const date = metadata?.date || ''
 
   return new ImageResponse(
     (

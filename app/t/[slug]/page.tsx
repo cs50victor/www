@@ -1,35 +1,38 @@
 import { Metadata, ResolvingMetadata } from 'next'
 import { notFound } from 'next/navigation'
-import fs from 'fs'
-import path from 'path'
 
 type Props  = {
   params: Promise<{ slug: string }>
 }
+
+// Known posts for build-time metadata generation
+const KNOWN_POSTS = ['rust-python-js-sdk', 'to-think']
+
+export async function generateStaticParams() {
+  return KNOWN_POSTS.map((slug) => ({
+    slug,
+  }))
+}
+
 export async function generateMetadata(
   { params : _params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const params = await _params;
-  // Try to get metadata directly from the MDX file
-  const postPath = path.join(process.cwd(), 'app/t', params.slug, 'page.mdx')
+  
+  // Check if this is a known post
+  if (!KNOWN_POSTS.includes(params.slug)) {
+    notFound()
+  }
   
   try {
-    // Check if this post exists
-    if (!fs.existsSync(postPath)) {
-      return notFound()
-    }
-
-    // Dynamic import to get the metadata from the MDX file
-    const postModule = await import(`../../${params.slug}/page.mdx`)
+    // Use safer dynamic import approach
+    const postModule = await import(`../../../app/t/${params.slug}/page.mdx`)
     const postMetadata = postModule.metadata || {}
     
     // Construct full URL for dynamic OG image
-    const ogImageUrl = new URL(`https://vic.so/t/${params.slug}/opengraph-image`).toString()
+    const ogImageUrl = `https://vic.so/t/${params.slug}/opengraph-image`
     
-    // Get parent metadata (from layout.tsx)
-    const previousImages = (await parent).openGraph?.images || []
-
     return {
       title: postMetadata.title,
       description: postMetadata.description,
@@ -54,20 +57,7 @@ export async function generateMetadata(
     }
   } catch (error) {
     console.error(`Error generating metadata for ${params.slug}:`, error)
-    // Return fallback metadata instead of parent to avoid type issues
-    return {
-      title: `Post - ${params.slug}`,
-      description: 'A blog post by Victor A.',
-      openGraph: {
-        title: `Post - ${params.slug}`,
-        description: 'A blog post by Victor A.',
-        type: 'article',
-        url: `https://vic.so/t/${params.slug}`,
-      },
-      twitter: {
-        card: 'summary_large_image',
-      },
-    }
+    notFound()
   }
 }
 
