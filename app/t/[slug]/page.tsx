@@ -24,12 +24,8 @@ export async function generateMetadata(
     const postModule = await import(`../../${params.slug}/page.mdx`)
     const postMetadata = postModule.metadata || {}
     
-    // Construct full URL for OG image
-    const ogImageUrl = new URL(`https://vic.so/t/${params.slug}/opengraph-image.png`).toString()
-    
-    // Check if the OG image exists, fall back to the default if it doesn't
-    const ogImagePath = path.join(process.cwd(), 'app/t', params.slug, 'opengraph-image.png')
-    const ogImageExists = fs.existsSync(ogImagePath)
+    // Construct full URL for dynamic OG image
+    const ogImageUrl = new URL(`https://vic.so/t/${params.slug}/opengraph-image`).toString()
     
     // Get parent metadata (from layout.tsx)
     const previousImages = (await parent).openGraph?.images || []
@@ -42,9 +38,7 @@ export async function generateMetadata(
         description: postMetadata.description,
         type: 'article',
         url: `https://vic.so/t/${params.slug}`,
-        images: ogImageExists 
-          ? [{ url: ogImageUrl, width: 1200, height: 630, alt: postMetadata.title }]
-          : previousImages,
+        images: [{ url: ogImageUrl, width: 1200, height: 630, alt: postMetadata.title }],
         siteName: 'Victor A.',
         locale: 'en_US',
         authors: ['Victor A.'],
@@ -55,7 +49,7 @@ export async function generateMetadata(
         card: 'summary_large_image',
         title: postMetadata.title,
         description: postMetadata.description,
-        images: ogImageExists ? [ogImageUrl] : undefined,
+        images: [ogImageUrl],
       },
     }
   } catch (error) {
