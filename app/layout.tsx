@@ -29,6 +29,19 @@ export const metadata: Metadata = {
     template: "%s | Victor A.",
   },
   description: "Software engineer. Builder.",
+  openGraph: {
+    type: 'website',
+    url: WEBSITE_URL,
+    title: "Victor A.",
+    description: "Software engineer. Builder.",
+    siteName: 'Victor A.',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Victor A.",
+    description: "Software engineer. Builder.",
+  },
 }
 
 const geistSans = Geist({
