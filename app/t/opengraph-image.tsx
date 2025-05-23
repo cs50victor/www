@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/server'
-import { WEBSITE_URL, NAME } from '@/lib/constants'
+import { NAME } from '@/lib/constants'
 
 export const runtime = 'edge'
 export const alt = `${NAME} - Thoughts`
