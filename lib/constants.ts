@@ -1,4 +1,4 @@
-type Project = {
+type Creation = {
   name: string
   description: string
   link: string
@@ -50,7 +50,7 @@ export const CURSOR_IMAGES = {
   }
 };
 
-export const PROJECTS: Project[] = [
+export const CREATIONS: Creation[] = [
   {
     name: 'kitt2',
     description: 'Real-time multimodal AI communication system using LiveKit. Renders 3D models into live video streams, enabling interactive AI avatars. Built with TypeScript and Python for the backend streaming capabilities.',

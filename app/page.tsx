@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/morphing-dialog'
 import Link from 'next/link'
 import { AnimatedBackground } from '@/components/ui/animated-background'
-import { PROJECTS, WORK_EXPERIENCE, SOCIAL_LINKS, ABOUT } from '@/lib/constants'
+import { CREATIONS, WORK_EXPERIENCE, SOCIAL_LINKS, ABOUT } from '@/lib/constants'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect } from 'react'
 import { CursorText } from '@/components/cursor-text'
@@ -38,11 +38,11 @@ const TRANSITION_SECTION = {
   duration: 0.3,
 }
 
-type ProjectVideoProps = {
+type CreationVideoProps = {
   src: string
 }
 
-function ProjectVideo({ src }: ProjectVideoProps) {
+function CreativeVideo({ src }: CreationVideoProps) {
   return (
     <MorphingDialog
       transition={{
@@ -142,7 +142,7 @@ export default function HomePage() {
 }
 
 function AnimatedTabsHover() {
-  const TABS = ['About', 'Projects', 'Thoughts', 'Experience', 'Contact'];
+  const TABS = ['About', 'Creations', 'Thoughts', 'Experience', 'Contact'];
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || TABS[0];
@@ -204,31 +204,31 @@ function AnimatedTabsHover() {
         </motion.section>
       )}
       
-      {activeTab === 'Projects' && (
+      {activeTab === 'Creations' && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
           animate="visible"
           transition={TRANSITION_SECTION}
-          key="projects-section"
+          key="creation-section"
         >
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {PROJECTS.map((project) => (
-              <div key={project.name} className="space-y-2">
+            {CREATIONS.map((creation) => (
+              <div key={creation.name} className="space-y-2">
                 <div className="relative rounded-2xl bg-zinc-50/40 p-1 ring-1 ring-zinc-200/50 ring-inset dark:bg-zinc-950/40 dark:ring-zinc-800/50">
-                  <ProjectVideo src={project.video} />
+                  <CreativeVideo src={creation.video} />
                 </div>
                 <div className="px-1">
                   <a
                     className="font-base group relative inline-block font-[450] text-zinc-900 dark:text-zinc-50"
-                    href={project.link}
+                    href={creation.link}
                     target="_blank"
                   >
-                    {project.name}
+                    {creation.name}
                     <span className="absolute bottom-0.5 left-0 block h-[1px] w-full max-w-0 bg-zinc-900 transition-all duration-200 group-hover:max-w-full"></span>
                   </a>
                   <p className="text-base text-zinc-600 dark:text-zinc-400">
-                    {project.description}
+                    {creation.description}
                   </p>
                 </div>
               </div>
