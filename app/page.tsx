@@ -142,7 +142,7 @@ export default function HomePage() {
 }
 
 function AnimatedTabsHover() {
-  const TABS = ['About', 'Creations', 'Thoughts', 'Experience', 'Contact'];
+  const TABS = ['About', 'Creations', 'Thoughts', 'Experience', 'Contact'] as const;
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || TABS[0];
@@ -192,7 +192,7 @@ function AnimatedTabsHover() {
         </AnimatedBackground>
       </div>
       
-      {activeTab === 'About' && (
+      {activeTab === TABS[0] && (
         <motion.section
           initial="hidden"
           animate="visible"
@@ -204,7 +204,7 @@ function AnimatedTabsHover() {
         </motion.section>
       )}
       
-      {activeTab === 'Creations' && (
+      {activeTab === TABS[1] && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
@@ -237,7 +237,7 @@ function AnimatedTabsHover() {
         </motion.section>
       )}
       
-      {activeTab === 'Thoughts' && (
+      {activeTab === TABS[2] && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
@@ -281,7 +281,7 @@ function AnimatedTabsHover() {
         </motion.section>
       )}
       
-      {activeTab === 'Experience' && (
+      {activeTab === TABS[3] && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
@@ -326,7 +326,7 @@ function AnimatedTabsHover() {
         </motion.section>
       )}
       
-      {activeTab === 'Contact' && (
+      {activeTab === TABS[4] && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
