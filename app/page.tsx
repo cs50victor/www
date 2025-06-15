@@ -247,7 +247,7 @@ function AnimatedTabsHover() {
         >
           <div className="flex flex-col space-y-0">
             <p className='max-w-9/12 mb-6 mx-auto text-foreground/70'>
-              <q>If you're thinking without writing, you only think you're thinking.</q>
+              <q>If you&apos;re thinking without writing, you only think you&apos;re thinking.</q>
               <br />
               - <cite>Leslie Lamport</cite>
             </p>
