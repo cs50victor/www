@@ -1,7 +1,5 @@
 import { ImageResponse } from 'next/og'
 import { NAME } from '@/lib/constants'
-
-export const runtime = 'edge'
 export const alt = `${NAME} - Thoughts`
 export const size = {
   width: 1200,
