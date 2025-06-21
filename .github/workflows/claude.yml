@@ -20,9 +20,9 @@ jobs:
       (github.event_name == 'issues' && contains(github.event.issue.body, '@vicatnight'))
     runs-on: macos-latest
     permissions:
-      contents: read
+      contents: write
       pull-requests: read
-      issues: read
+      issues: write
       id-token: write
     steps:
       - name: Checkout repository
@@ -37,4 +37,9 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           timeout_minutes: '60'
           trigger_phrase: '@vicatnight'
+          custom_instructions: |
+                      Follow the CLAUDE.md guidelines strictly.
+                      Commit changes with descriptive messages.
+          allowed_tools: "Bash,Edit,Read,Write,Glob,Grep,LS,MultiEdit,NotebookRead,NotebookEdit,Python"
+
           
