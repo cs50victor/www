@@ -1,1 +1,2 @@
 - please be as concise as possible. aim for simplicity.
+- please run `bun run build` to verify the changes you made do not break the build.
