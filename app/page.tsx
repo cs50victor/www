@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/morphing-dialog'
 import Link from 'next/link'
 import { AnimatedBackground } from '@/components/ui/animated-background'
-import { CREATIONS, WORK_EXPERIENCE, SOCIAL_LINKS, ABOUT } from '@/lib/constants'
+import { WORKS, WORK_EXPERIENCE, SOCIAL_LINKS, ABOUT } from '@/lib/constants'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect } from 'react'
 import { CursorText } from '@/components/cursor-text'
@@ -38,11 +38,11 @@ const TRANSITION_SECTION = {
   duration: 0.3,
 }
 
-type CreationVideoProps = {
+type WorkVideoProps = {
   src: string
 }
 
-function CreativeVideo({ src }: CreationVideoProps) {
+function WorkVideo({ src }: WorkVideoProps) {
   return (
     <MorphingDialog
       transition={{
@@ -142,7 +142,7 @@ export default function HomePage() {
 }
 
 function AnimatedTabsHover() {
-  const TABS = ['About', 'Creations', 'Thoughts', 'Experience', 'Contact'] as const;
+  const TABS = ['About', 'Work', 'Thoughts', 'Experience', 'Contact'] as const;
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || TABS[0];
@@ -210,25 +210,25 @@ function AnimatedTabsHover() {
           initial="hidden"
           animate="visible"
           transition={TRANSITION_SECTION}
-          key="creation-section"
+          key="work-section"
         >
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {CREATIONS.map((creation) => (
-              <div key={creation.name} className="space-y-2">
+            {WORKS.map((work) => (
+              <div key={work.name} className="space-y-2">
                 <div className="relative rounded-2xl bg-zinc-50/40 p-1 ring-1 ring-zinc-200/50 ring-inset dark:bg-zinc-950/40 dark:ring-zinc-800/50">
-                  <CreativeVideo src={creation.video} />
+                  <WorkVideo src={work.video} />
                 </div>
                 <div className="px-1">
                   <a
                     className="font-base group relative inline-block font-[450] text-zinc-900 dark:text-zinc-50"
-                    href={creation.link}
+                    href={work.link}
                     target="_blank"
                   >
-                    {creation.name}
+                    {work.name}
                     <span className="absolute bottom-0.5 left-0 block h-[1px] w-full max-w-0 bg-zinc-900 transition-all duration-200 group-hover:max-w-full"></span>
                   </a>
                   <p className="text-base text-zinc-600 dark:text-zinc-400">
-                    {creation.description}
+                    {work.description}
                   </p>
                 </div>
               </div>
@@ -289,7 +289,7 @@ function AnimatedTabsHover() {
           transition={TRANSITION_SECTION}
           key="experience-section"
         >
-          <div className="flex flex-col space-y-3 max-w-9/12 mx-auto">
+          <div className="flex flex-col space-y-3 max-w-11/12 mx-auto">
             <div className='mb-10'>
               <InfiniteSlider speedOnHover={20} gap={24}>
                 {WORK_EXPERIENCE.map(({img_src, company}, index) => (
@@ -333,7 +333,7 @@ function AnimatedTabsHover() {
           animate="visible"
           transition={TRANSITION_SECTION}
           key="contact-section"
-          className='max-w-3/6 mx-auto'
+          className='w-full flex items-center justify-center'
         >
           <div className="flex items-center justify-start space-x-3">
             {SOCIAL_LINKS.map((link) => (

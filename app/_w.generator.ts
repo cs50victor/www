@@ -62,7 +62,7 @@ async function generateWritings() {
 
   // Sort writings by date (newest first)
   writings.sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
 
   // If no hero is set, set the first element as hero

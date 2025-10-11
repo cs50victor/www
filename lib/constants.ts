@@ -1,4 +1,4 @@
-type Creation = {
+type Work = {
   name: string
   description: string
   link: string
@@ -50,7 +50,7 @@ export const CURSOR_IMAGES = {
   }
 };
 
-export const CREATIONS: Creation[] = [
+export const WORKS: Work[] = [
   {
     name: 'kitt2',
     description: 'Real-time multimodal AI communication system using LiveKit. Renders 3D models into live video streams, enabling interactive AI avatars. Built with TypeScript and Python for the backend streaming capabilities.',
@@ -92,9 +92,9 @@ export const WORK_EXPERIENCE: WorkExperience[] = [
     link: "https://www.factset.com/",
   },
   {
-    company: "Concord University",
+    company: "Concord University (Department of Physical and Environmental Sciences)",
     img_src: "https://static.wixstatic.com/media/669cfa_af84ca57b7834090805611e9f0f6d77d~mv2.jpg/v1/fill/w_1000,h_750,al_c,q_85,usm_0.66_1.00_0.01/669cfa_af84ca57b7834090805611e9f0f6d77d~mv2.jpg",
-    title: "Full Stack Software Developer",
+    title: "Full Stack Software Engineer",
     start: "2021",
     end: "2022",
     link: "https://github.com/concord-epma/concord-sparrow",
@@ -116,6 +116,15 @@ export const WORK_EXPERIENCE: WorkExperience[] = [
     start: "2018",
     end: "2022",
     link: "https://www.concord.edu/",
+  },
+  {
+    company: "Bonner Foundation",
+    img_src: "https://static.wixstatic.com/media/669cfa_af84ca57b7834090805611e9f0f6d77d~mv2.jpg/v1/fill/w_1000,h_750,al_c,q_85,usm_0.66_1.00_0.01/669cfa_af84ca57b7834090805611e9f0f6d77d~mv2.jpg",
+    title: "Bonner Scholar",
+    achievement_summary: "Over 1,500 hours served in the Athens community through gardening, tutoring, and assisting with managing the Athens bike trail program.",
+    start: "2019",
+    end: "2022",
+    link: "https://www.bonner.org/",
   }
 ]
 
@@ -137,6 +146,10 @@ export const SOCIAL_LINKS: SocialLink[] = [
   {
     label: 'LinkedIn',
     link: 'https://www.linkedin.com/in/vicdotso',
+  },
+  {
+    label: 'Substack',
+    link: 'https://vicdotso.substack.com/',
   },
 ]
 

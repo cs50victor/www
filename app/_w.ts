@@ -1,20 +1,21 @@
 // This file is auto-generated. Do not edit it manually.
 export const ALL_WRITINGS = [
   {
-    "slug": "/t/rust-python-js-sdk",
-    "title": "Cross-Language Harmony: Building Python & TypeScript SDKs with Rust.",
-    "description": "Creating a python and a javascript sdk using rust in one repository and some advantages of a using a lower level language as your core.",
-    "date": "03/2024",
-    "hero": false,
+    "slug": "/t/dev-tooling-2025",
+    "title": "My Dev Tooling in 2025: A Year of Agents, Rust, and Staying in Flow",
+    "description": "A quarter-by-quarter breakdown of how my development workflow evolved in 2025, from DeepSeek R1 to Claude Code, and what I think comes next.",
+    "date": "10/09/2025",
+    "hero": true,
     "tags": [
-      "tech"
+      "tech",
+      "dev-tooling"
     ]
   },
   {
     "slug": "/t/to-think",
     "title": "Struggling to Think.",
     "description": "A personal reflection on the importance of writing for clear thinking.",
-    "date": "04/2025",
+    "date": "03/01/2025",
     "hero": true,
     "tags": [
       "tech"

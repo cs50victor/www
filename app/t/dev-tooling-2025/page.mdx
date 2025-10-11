@@ -1,0 +1,130 @@
+export const metadata = {
+  title: 'My Dev Tooling in 2025: A Year of Agents',
+  description: 'A quarter-by-quarter breakdown of how my development workflow evolved in 2025, from DeepSeek R1 to Claude Code.',
+  tags: ["tech", "dev-tooling"],
+  hero: true,
+  date: "10/10/2025",
+};
+
+# My Dev Tooling in 2025: A Year of Agents
+
+As of October 10, 2025, my development stack looks market=dly different from what I used in January. Terminal-native agets, reasoning models, and Rust-backed tooling have beta / experimental projects to vital dependencies. Here's a quarterly summary of what changed.
+
+---
+
+## Q1 2025 (Jan - Mar): The Reasoning Model Hype
+
+### DeepSeek R1 and the Promise of Reasoning Models
+
+January 20th marked the release of DeepSeek's R1 model, an open source reasoning model that promised parity with OpenAI's o1. Running it through Fireworks AI showed how accessible self-hosted reasoning models could be become, but also exposed the fragility of long rollouts and the limited reliability of agentic rollouts regardless of how good your swe harness was. This was still very much a clear signal that scaling test-time compute and RL training would greatly enhance the capabilities of these models, especially in the domain of software engineering. Zed [zed.dev] stayed in place as the ide i rely on. Its Rust foundation, and GPU based rendering meant I could work without the interface stalls that still surface in some Electron-based editors like VScode. Q1 was still largely about chat-style assistants layered on top of familiar workflows, but the ground was starting to shift.
+
+---
+
+## Q2 2025 (Apr - Jun): The Python Tooling Renaissance
+
+Around this time the `uv` cli by Astral had gained a lot more adoption from when I began using it. It began showing up in more open source repositories as the recommended way to run projects and had added more ease-of-life features. I initially fell in love with the idea of having a streamlined toolchain for handling several parts of the developement expeience similar to `cargo`, the default rust package manager. This meant that you didn't need several package / binaries in order  creating a .py script had never been easier. It's remarkable to think we came so far in such a short time. From manually adding packages to a `requirements.txt` file, and battling with conda, miniconda, virtualenv, and pip, to an all incluisve tooling to run scripts that handles this all in the background. Uv scripts are such a killer feature that it is most times the deciding factor on what language to use for a quick script.
+
+The killer feature? **Inline script dependencies.**
+
+Before `uv`, if I wanted to write a quick Python script that used, say, `requests` and `beautifulsoup4`, you'd have to:
+1. Create a venv
+2. Activate it
+3. Install dependencies
+4. Run the script
+5. Remember to deactivate the venv later (or just leave it activated and forget about it)
+
+With `uv`, you just added a header to your `.py` file:
+
+```python
+# /// script
+# dependencies = [
+#   "requests",
+#   "beautifulsoup4",
+# ]
+# ///
+
+import requests
+from bs4 import BeautifulSoup
+
+# ... rest of script
+```
+
+---
+
+## Q3 2025 (Jul - Sep): The Agent Surge
+
+
+July 17th brought ChatGPT agent. This wasn't just another chatbot upgrade—it could actually think through problems, use tools, and complete real tasks. Book flights, do research, build slide decks. The gap between "AI assistant" and "AI agent" was finally closing.
+
+Then August 5th, OpenAI shipped GPT-5. They called it their best system yet, with improvements across coding, math, writing, health, visual perception. A week later, Cursor released their Agent CLI. Background agents that could run in parallel, work across large codebases, tackle the kinds of tasks that used to require multiple developers coordinating. Anthropic wasn't sitting still either—Claude Opus 4.1 landed the same month, along with a Chrome extension that could directly control your browser. By September 29th, we had Claude Sonnet 4.5, which pushed the bar even higher for coding and agentic tasks.
+
+### Claude Code: The First Agent I Didn't Want to Cancel
+
+Claude Code was the first agentic tool that felt complete. No random red errors that made you question if you'd broken something. No network failures that left you stranded mid-task. The automatic memory compacting meant conversations didn't bloat into unusable messes after a few hours of work.
+
+It worked. Consistently.
+
+I've subscribed to a good number of dev tools, and have had to cancel most of them within a month. But Claude Code stuck. Even at over $100, I didn't find myself looking for reasons to drop it. I started using it more than my default IDE, which felt strange at first. It didn't even have checkpointing, if you needed to undo something, you'd literally ask the model to "undo what you just did" and burn through another request. With near unlimited monthly requests though, that wasn't really a problem.
+
+The more I used Claude Code, the clearer its patterns became. Models work better with more context, so I stopped assuming what the model should know and started giving more acess to tools to retrieve that context itself. 
+
+here is my claude code config, feel free to dm me feedback on ways to improve it:
+
+```json
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "ANTHROPIC_MODEL": "claude-sonnet-4-5-20250929",
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": 60000,
+    "DISABLE_TELEMETRY": 1,
+    "CLAUDE_CODE_ENABLE_TELEMETRY": 0,
+    "MAX_THINKING_TOKENS": "40000",
+    "BASH_DEFAULT_TIMEOUT_MS": "900000",
+    "BASH_MAX_TIMEOUT_MS": "900000"
+  },
+  "permissions": {
+    "defaultMode": "plan",
+    "allow": [
+      "WebFetch",
+      "WebSearch",
+
+      "Bash(rg:*)",
+      "Bash(bunx:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(date:*)",
+      "Bash(echo:*)",
+      "Bash(tail:*)",
+      "Bash(head:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(curl -s:*)",
+      "Bash(gh search:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh repo view:*)",
+      "Bash(pdftotext:*)",
+      "Bash(cargo check:*)",
+      "Bash(npm view:*)",
+      "Bash(wc:*)",
+      "Bash(sed -n:*)",
+      "Bash(ast-grep:*)",
+      "Bash(ls:*)"
+    ]
+  },
+  "alwaysThinkingEnabled": true,
+  "feedbackSurveyState": {
+    "lastShownTime": 1754023673876
+  }
+}
+```
+
+There's still the issue of **context recency bias**—models tend to forget or hallucinate on information that isn't recent in the conversation. The `/init` command helps by creating a mental model of the codebase for Claude to reference, and it mostly works. When there's a major architectural change in the repository though, it sometimes starts with wrong assumptions. It sometimes recovers once it gets fresh context from the codebase, but those initial missteps reveal how much these systems still rely on recency over true understanding.
+
+---
+
+## Q4 2025 (Oct - Dec): Experiments and What's Next
+
+We're only 10 days into Q4 as I write this (October 10th), but the momentum is already building.
+
+OpenAI's Devday just wrapped up with promising releases and announcedments from AgentKit to Gpt-5 codex finetune. Anthrpic is preparing to laucnh a sucess fo Gpt 4.5 sonnet in the coming weeks, and not to forget the 12 days of Shipmas from OpenAi where i'm guessing a new scaling parardim might be announced.
+

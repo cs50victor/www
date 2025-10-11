@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from 'next-themes'
 import { Geist, Geist_Mono, Gowun_Batang, Mona_Sans } from 'next/font/google';
 import { WEBSITE_URL } from '@/lib/constants'
+import localFont from 'next/font/local';
 
 const monaSans = Mona_Sans({
   variable: '--font-mona-sans',
@@ -60,6 +61,28 @@ const gowun = Gowun_Batang({
   variable: '--font-geist-serif',
   subsets: ['latin'],
   weight: ['400', '700']
+});
+
+// todo use later
+const _oldStandard = localFont({
+  variable: '--font-old-standard',
+  src: [
+    {
+      path: './iowan-old-style_bold.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: './iowan-old-style_italic.woff2',
+      weight: '400',
+      style: 'italic',
+    },
+    {
+      path: './iowan-old-style_regular.woff2',
+      weight: '400',
+      style: 'normal',
+    }
+  ]
 });
 
 export default function RootLayout({

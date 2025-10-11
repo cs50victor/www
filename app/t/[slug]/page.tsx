@@ -6,7 +6,12 @@ type Props  = {
 }
 
 // Known posts for build-time metadata generation
-const KNOWN_POSTS = ['rust-python-js-sdk', 'to-think']
+const KNOWN_POSTS = [
+  'to-think', 
+  // TODO: uncomment later
+  // 'vibe-code-responsibly', 
+  'dev-tooling-2025'
+]
 
 export async function generateStaticParams() {
   return KNOWN_POSTS.map((slug) => ({
