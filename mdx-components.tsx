@@ -1,9 +1,27 @@
 import type { MDXComponents } from 'mdx/types'
 import Image from 'next/image'
+import { CodeSnippet } from './components/kibo-ui/snippet/code-snippet'
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     ...components,
+    pre: ({ children, ...props }) => {
+      const codeContent = 
+        typeof children?.props?.children === 'string' ? 
+          children?.props?.children
+          : ""
+      const language = children?.props?.className?.replace("language-","") as string ?? "plaintext"
+      return (
+        <CodeSnippet
+          commands={[
+            {
+              label: language,
+              code: codeContent,
+            }
+          ]}
+        />
+      )
+    },
     Cover: ({
       src,
       alt,
