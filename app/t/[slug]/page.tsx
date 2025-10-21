@@ -8,7 +8,7 @@ type Props  = {
 // Known posts for build-time metadata generation
 const KNOWN_POSTS = [
   'to-think',
-  'no-instructions',
+  'no-handbook',
 ]
 
 export async function generateStaticParams() {

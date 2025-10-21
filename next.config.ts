@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         destination: '/?tab=Writing',
         permanent: true,
       },
+      {
+        source: '/t/no-instructions',
+        destination: '/t/no-handbook',
+        permanent: true,
+      },
     ]
   },
   experimental: {

@@ -1,30 +1,30 @@
 export const metadata = {
-  title: 'There Are Still No Instructions',
+  title: 'There Is No Handbook',
   description: 'On building mental models and navigating uncertainty in the age of coding agents.',
   tags: ["tech", "dev tooling"],
   hero: true,
   date: "10/21/2025",
   openGraph: {
-    title: 'There Are Still No Instructions',
+    title: 'There Is No Handbook',
     description: 'On building mental models and navigating uncertainty in the age of coding agents.',
     type: 'article',
-    url: 'https://vic.so/t/no-instructions',
+    url: 'https://vic.so/t/no-handbook',
     publishedTime: '2025-10-21T00:00:00.000Z',
     authors: ['Victor A.'],
     tags: ["tech", "dev tooling"],
-    images: [{ url: 'https://vic.so/t/no-instructions/quantum.jpg', width: 1200, height: 630, alt: 'Quantum Bugs' }],
+    images: [{ url: 'https://vic.so/t/no-handbook/quantum.jpg', width: 1200, height: 630, alt: 'Quantum Bugs' }],
     siteName: 'Victor A.',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'There Are Still No Instructions',
+    title: 'There Is No Handbook',
     description: 'On building mental models and navigating uncertainty in the age of coding agents.',
-    images: ['https://vic.so/t/no-instructions/quantum.jpg'],
+    images: ['https://vic.so/t/no-handbook/quantum.jpg'],
   },
 };
 
-# There Are Still No Instructions
+# There Is No Handbook
 
 For most people, software engineering is a means to an end. For others, it's a form of expression, a hobby, and sometimes escapism. They enjoy the process of building software and learning things along the way. They try new programming languages, experiment with frameworks, scroll through GitHub's explore page to see what's out there. These two groups are quite different, but at the workplace they've always been in the same boat. Before autonomous coding agents, there wasn't much difference in how they worked.
 
@@ -50,7 +50,7 @@ I've felt the dopamine hit of low-effort, high-reward coding. It's like gambling
 
 ## Quantum Bugs
 
-![Quantum Bugs](/t/no-instructions/quantum.jpg)
+![Quantum Bugs](/t/no-handbook/quantum.jpg)
 
 A significant chunk of software engineering is debugging. To debug effectively, you need both the confidence that the bug can be resolved and the tenacity to keep hammering at it over a long period. Some bugs are `quantum`: extremely hard to reproduce and sometimes hard to explain. They're not directly visible in the codebase and mostly happen at runtime. For example, an Objective-C to Rust FFI boundary that leaks memory or behaves differently across macOS versions, causing features to work on Monterey but panic on Sonoma when a specific sequence of events occurs. Or a function deep in a large codebase that tries to kill a port asynchronously while another part tries to start a process on that same port, and the kill mechanism executes right after an async check confirms the port is running. Solving gnarly issues like these builds muscles no agent has mastered just yet.
 

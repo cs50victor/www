@@ -1,8 +1,8 @@
 // This file is auto-generated. Do not edit it manually.
 export const ALL_WRITINGS = [
   {
-    "slug": "/t/no-instructions",
-    "title": "There Are Still No Instructions",
+    "slug": "/t/no-handbook",
+    "title": "There Is No Handbook",
     "description": "On building mental models and navigating uncertainty in the age of coding agents.",
     "date": "10/21/2025",
     "hero": true,
