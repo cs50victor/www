@@ -1,0 +1,25 @@
+export const metadata = {
+  title: 'Working with Coding Agents. There are still no rules.',
+  description: 'A quarter by quarter breakdown of how my development workflow evolved in 2025, from DeepSeek R1 to Claude Code.',
+  tags: ["tech", "dev tooling"],
+  hero: true,
+  date: "10/10/2025",
+};
+
+# There are still no instructions.  
+
+For most people, software engineering and programming are a means to an end. For others it is a form of expression, hooby and sometimes escapisom. They ennjoy the process of building software, learning things in the process of building things. They try new programming languages, experiment with new frameworks, and scroll on the github explore page to see what new things are out there.  These two groups can be quite different, but they are both very much in the same boat at the workplace and before the intoduction of coding agents [1] there wasn't a huge difference in the workflow of how these two groups work.
+
+As the capabliities of these autnomous coding agents keep impriving, there has been more and more sway to rely on these fully autonomous agents completly for the entirety of the development process. There have been multiple demos of using these agents to go from 0 to 100 in a few minutes. I find these really promising and love the idea of having highly intellignent tools to generate pieces of code for demos and even for crticial features. These are great but one major thing to consider is that unlike a lot of other tools, Software Engineering improves your problem solving and critical thinking skills, among other many other skills, the more you practice it. 
+
+The thing is, without any form of friction, a little bit of time spent figuring thing out when things don't work, it is a lot harder to learn and get better. 
+I've been looking into how i use llms for coding and way i can more effecientively use these tools and time and time again I hit limitations caused by the current shortcoming of LLMs. Of which I can sum up to as tenacity and poor mental models. I also enjoyed reading Mitchell Hashimoto's blog post on [Vibing a Non-Trivial Ghostty Feature](https://mitchellh.com/writing/non-trivial-vibing). Which is a great read and I highly recommend it. It shows that having a solid mental model of your codebase helps you move a lot faster even with agents. It is also the only way to be able to fix bugs today's models simply can't (a least without extreme prompting gymnastics). Getting a solid mental model of your codebase enable you to dramatically narrow down any future errors to a couple lines of code or files in your codebase. It help with understanding where and how best to implement new features, and building this model sometimes takes a bit of upfront work that vibe coding devoid you off.
+
+A singificant chunk of the software engineering process is debugging and the be able to debug some errors effectively you have to have both the conifdence it can be stopped and the tenacity and persistence to keep hammering at it over a sometimes long period of time. There are some `Quantum Bugs` that are extremely hard to reproduce, even sometimes hard to explain. The bugs are aren't directly visiblty in the cobase, they are mostly runtime errors like panics when a very specific set of evens happen in the app or async issues or they span across how micro services interact with each other. Most sufficitnely good programmers have to ability to go on for hours until the bug is fixed. Current LLMs from my experience, try to skip over bugs after trying to fix things for a couple minutes. And if this was vibe coded, you might be asking yourself, why not just rewirte the whole thing again. Apart from this not being a viable solution in a lot of scenenrios, if new bugs are introduced, you end up playing a game of whacamole.
+
+We are still very early in this process and things are moving so quckly, ( just a year ago, most people using the temrinal for coding were vim / emacs users but tools like Claude code and Codex have aloowed a lot of people to use the terminal for coding. ). There is still no certain way to control the models consistently, a setup that works for one engineer might not work for another. and as things keep evolving, I'm not even certain that prompt files in the way we have them right now (CLAUDE.md, AGENT.md etc) would stick around for much longer if these memory limitations are ever removed by new architecural unlocks in the future like Continuus learning. Creating a mardown file, in addition to comments and docs already in your codebase feels like writing a INTERN_1.md or INTERN_2.md for each new intern you onboard to your codebase. IT all still feels like heuristic patches to help solve memeory limitations.
+
+
+---
+
+[1] Coding agents refer to and is scoped down to all fully autonomous capabale software and scaffolds like Claude Code and Codex cli.
