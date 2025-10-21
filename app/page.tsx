@@ -166,7 +166,7 @@ function AnimatedTabsHover() {
       <div className='flex justify-between mb-12'>
         <AnimatedBackground
           defaultValue={activeTab}
-          className='rounded-lg bg-zinc-100 dark:bg-zinc-800'
+          className='rounded-lg bg-zinc-100 dark:bg-zinc-800 tracking-tighter'
           transition={{
             type: 'spring',
             bounce: 0.2,

@@ -10,19 +10,6 @@ import {
 } from "@/components/kibo-ui/snippet";
 import { useState } from "react";
 
-// const commands = [
-//   {
-//     label: "kibo-ui",
-//     icon: HeartIcon,
-//     code: "npx kibo-ui@latest add snippet",
-//   },
-//   {
-//     label: "shadcn",
-//     icon: BoxIcon,
-//     code: "npx shadcn@latest add https://www.kibo-ui.com/r/snippet.json",
-//   },
-// ];
-
 export type SnippetCommand = {
   label: string;
   // icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>
@@ -38,11 +25,23 @@ export const CodeSnippet = ({
   const activeCommand = commands.find((command) => command.label === value);
 
   return (
-    <Snippet onValueChange={setValue} value={value}>
-      <SnippetHeader>
-        <SnippetTabsList>
+    <Snippet 
+      className="bg-gray-area border-none font-mono"
+      onValueChange={setValue} 
+      value={value}
+    >
+      <SnippetHeader
+        className="bg-gray-area"
+      >
+        <SnippetTabsList
+          className="bg-gray-area"
+        >
           {commands.map((command) => (
-            <SnippetTabsTrigger key={command.label} value={command.label}>
+            <SnippetTabsTrigger 
+              className="bg-gray-area! shadow-none! drop-shadow-none! ring-0! border-none! text-xs!"
+              key={command.label} 
+              value={command.label}
+            >
               <span>{command.label}</span>
             </SnippetTabsTrigger>
           ))}
@@ -62,7 +61,10 @@ export const CodeSnippet = ({
         )}
       </SnippetHeader>
       {commands.map((command) => (
-        <SnippetTabsContent key={command.label} value={command.label}>
+        <SnippetTabsContent 
+          className="bg-gray-area text-foreground font-mono"
+          key={command.label} value={command.label}
+        >
           {command.code}
         </SnippetTabsContent>
       ))}
