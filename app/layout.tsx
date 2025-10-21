@@ -1,5 +1,5 @@
 import './globals.css'
-import { unstable_ViewTransition as ViewTransitions } from 'react';
+import { unstable_ViewTransition as ViewTransition } from 'react';
 import type { Metadata, Viewport } from 'next'
 import { Footer } from './footer'
 import { Analytics } from "@vercel/analytics/react";
@@ -91,7 +91,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <ViewTransitions>
+    <ViewTransition>
       <html 
         lang="en" 
         className={`${geistMono.variable} ${geistSans.variable} ${gowun.variable} ${monaSans.variable} tracking-tight antialiased`}
@@ -118,6 +118,6 @@ export default function RootLayout({
           </ThemeProvider>
         </body>
       </html>
-    </ViewTransitions>
+    </ViewTransition>
   )
 }
