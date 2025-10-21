@@ -1,0 +1,61 @@
+export const metadata = {
+  title: 'There Are Still No Instructions',
+  description: 'On building mental models and navigating uncertainty in the age of coding agents.',
+  tags: ["tech", "dev tooling"],
+  hero: true,
+  date: "10/21/2025",
+};
+
+# There Are Still No Instructions
+
+For most people, software engineering is a means to an end. For others, it's a form of expression, a hobby, and sometimes escapism. They enjoy the process of building software and learning things along the way. They try new programming languages, experiment with frameworks, scroll through GitHub's explore page to see what's out there. These two groups are quite different, but at the workplace they've always been in the same boat. Before autonomous coding agents, there wasn't much difference in how they worked.
+
+That's changing fast.
+
+As these agents improve, there's increasing pressure to rely on them completely for the entire development process. The demos are compelling. You can go from zero to shipped feature in minutes. I find these promising and love having highly intelligent tools generate code for demos and critical features alike. But there's something important to consider: unlike most tools, software engineering improves your problem solving and critical thinking skills the more you practice it.
+
+## The Overlap
+
+When the printing press arrived in the 1450s, scribes didn't immediately disappear. They worked alongside the new technology for decades, eventually specializing in illuminated manuscripts for nobility while printed books handled mass distribution. Factory owners in the 1880s didn't rip out steam engines the moment electricity showed promise. Both coexisted for forty years before the transition completed. We're in a similar overlap now.
+
+A year ago, most people using the terminal for coding were vim and emacs users. Tools like Claude Code and Cursor have changed that overnight. CLAUDE.md files didn't exist. Fully autonomous agents working in your terminal weren't a thing. Now they're everywhere, and the tooling landscape shifts every three months. OpenAI Codex, Claude Code, Cursor, Windsurf, Ampcode. Each promises a more effective software engineering workflow. Each requires you to rebuild your muscle memory.
+
+Committing fully to any single approach feels premature. The only certainty is uncertainty.
+
+## Required Friction
+
+Without friction, without spending time figuring things out when they break, it's a lot harder to learn and improve as an engineer. I've been examining how I use LLMs for coding, looking for ways to use these tools more effectively. Time and again I hit limitations that boil down to two things: poor mental models and lack of tenacity. Despite these challenges, when used thoughtfully, these tools can still accelerate development in meaningful ways. They're just not the complete solution yet.
+
+Mitchell Hashimoto's post on [vibing a non-trivial Ghostty feature](https://mitchellh.com/writing/non-trivial-vibing) captures this well. Having a solid mental model of your codebase helps you move faster even when using agents. More importantly, it's the only way to fix bugs today's models simply can't handle. At least not without extreme prompting gymnastics. A solid mental model lets you narrow errors down to a few lines or files. It informs where and how to implement features. Building this model takes upfront work that pure vibe coding skips entirely.
+
+I've felt the dopamine hit of low-effort, high-reward coding. It's like gambling. You win a few hands quickly and feel invincible. Then things inevitably break, and you have no idea where to start fixing them. Even the model gets stuck, cycling through the same failed attempts.
+
+## Quantum Bugs
+
+![Quantum Bugs](/t/no-instructions/quantum.jpg)
+
+A significant chunk of software engineering is debugging. To debug effectively, you need both the confidence that the bug can be stopped and the tenacity to keep hammering at it over a long period. Some bugs are quantum. Extremely hard to reproduce, and sometimes hard to explain. They're not directly visible in the codebase. They happen at runtime. For example, an Objective-C to Rust FFI boundary that leaks memory differently across macOS versions, causing features to work on Monterey but panic on Sonoma when a specific sequence of events occurs. Or a function deep in a large codebase that tries to kill a port asynchronously while another part tries to start a process on that same port, and the kill mechanism executes right after an async check confirms the port is running.
+
+Most good programmers have the ability to pursue these bugs for hours until they're fixed. Current LLMs, in my experience, try to skip over bugs after a few minutes. If this was vibe-coded, you might think: why not just rewrite the whole thing? Apart from not being viable in most scenarios, if new bugs are introduced, you end up playing whack-a-mole.
+
+## The Memory Problem
+
+These models have a limited sense of time. They're shut down and rebooted at will. They don't develop the kind of temporal awareness that comes from continuous experience. To help address this in my workflow, I added a hook to Claude Code's settings to inject local and UTC timestamps into all my messages because without it, the model has no anchor for what "this morning" or "that bug from yesterday" means, even more practically when asking for recent docs web searches it would make web queries like "nextjs docs 2024" when it should be searhing for 2025 docs.
+
+I constantly have to remind running agents that I've edited files. "Hey, I changed that function. Re-read it.". These models also trust stale documentation blindly instead of treating the codebase as the source of truth. Engineers adapt and figure things out by walking through the code. The models sometimes latch onto outdated API references or deprecated patterns and confidently generate broken code.
+
+It's unclear whether current workflows will persist. CLAUDE.md files, AGENT.md instructions, carefully crafted system prompts. They feel like heuristic patches for memory limitations. Creating a markdown file in addition to comments and docs already in your codebase feels like writing INTERN_1.md or INTERN_2.md for each new team member. If we ever get architectural breakthroughs like continuous learning or specialized LoRAs for individual engineers, this entire scaffolding might disappear.
+
+## Testing the Waters
+
+We're still very early in this process and things are moving quickly. There's no certain way to control these models consistently. A setup that works for one engineer might fail for another. As capabilities evolve, the instructions and workflows we build today might look quaint by 2027.
+
+So what do we do? Test the waters. Commiting your entire workflow to a tool or system that might be outdated in three months might not be the most optimistic strategy. Build mental models of your codebase so you can work effectively with or without agents. Use these tools for what they're good at and stay engaged enough to understand what they're doing.
+
+The transition will take time. We're somewhere between steam engines and electric motors, between scribes and printing presses. The technology is clearly transformative, but the best practices haven't settled. Rushing to optimize for today's limitations might mean missing tomorrow's breakthroughs.
+
+For now, the only certainty is uncertainty. And that's okay.
+
+---
+
+[1] "Coding agents" refers to fully autonomous capable software and scaffolds like Claude Code, Cursor, and similar CLI tools.

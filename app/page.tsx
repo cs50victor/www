@@ -263,13 +263,12 @@ function AnimatedTabsHover() {
               {ALL_WRITINGS.map((post, i) => (
                 <Link
                   key={`w-${i}`}
-                  className="writing item-mx-3 block rounded-xl px-3 py-3 group"
+                  className="writing item-mx-3 block  px-3 py-4 group border-b-1 border-b-accent hover:rounded-xl hover:border-zinc-900/50 hover:border-b-0"
                   href={post.slug}
                   data-id={`w-${i}`}
                 >
                   <div className="flex flex-col space-y-1">
                     <div>
-                      <span className='inline-block mr-2'>{ALL_WRITINGS.length - i-1}. </span>
                       <h4 className="inline-block font-normal">{post.title}</h4>
                     </div>
                     <p className="text-zinc-500 dark:text-zinc-400">{post.description}</p>

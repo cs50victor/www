@@ -5,6 +5,12 @@ import { CodeSnippet } from './components/kibo-ui/snippet/code-snippet'
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     ...components,
+    img: ({ gray = true, ...props }: any) => (
+      <img
+        {...props}
+        style={{ filter: gray ? 'grayscale(1) brightness(0.9)' : 'none' }}
+      />
+    ),
     pre: ({ children, ...props }) => {
       const codeContent = 
         typeof children?.props?.children === 'string' ? 
