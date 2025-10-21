@@ -103,9 +103,9 @@ export default function RootLayout({
           <ThemeProvider
             attribute="class"
             storageKey="theme"
-            // defaultTheme="system"
+            // todo: uncomment when substack iframe embed fix is done
+            // enableSystem
             defaultTheme="light"
-            enableSystem
             disableTransitionOnChange
           >
             <div className="flex min-h-screen w-full flex-col">

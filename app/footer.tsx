@@ -65,7 +65,8 @@ export function Footer() {
     <footer className="absolute bottom-0 left-1/2 mx-auto py-6">
       <div className="flex items-center justify-center w-full">
         <div className="text-xs text-zinc-400 border rounded-full">
-          <ThemeSwitch />
+          {/*TODO: renable after substack iframe embed fix */}
+          {/*<ThemeSwitch />*/}
         </div>
       </div>
     </footer>
