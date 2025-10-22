@@ -1,6 +1,7 @@
 import type { MDXComponents } from 'mdx/types'
 import Image from 'next/image'
 import { CodeSnippet } from './components/kibo-ui/snippet/code-snippet'
+import Link from 'next/link'
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -64,21 +65,42 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     }: {
       isDev?: boolean
     }) => {
-      const src = isDev 
+      const src = isDev
         ? "https://vibecoderesponsibly.substack.com/embed"
         : "https://vicdotso.substack.com/embed"
 
       return (
         <>
           <span className='block py-6 opacity-0'>{"_"}</span>
-          <iframe 
+          <iframe
             src={src}
-            // width="480" 
-            // height="320" 
+            // width="480"
+            // height="320"
             className="w-full h-full my-9 border border-[#EEE] rounded-sm"
             // style={{ background: "black !important" }}
           />
         </>
+      )
+    },
+    EditContact: ({ slug }: { slug: string }) => {
+      return (
+        <div className="flex gap-2 text-sm w-full items-center justify-center">
+          <Link
+            href={`https://github.com/cs50victor/www/edit/main/app/t/${slug}/page.mdx`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline-offset-6"
+          >
+            propose a change
+          </Link>
+          <span>/</span>
+          <Link
+            href="https://vic.so/?tab=Contact"
+            className="underline-offset-6"
+          >
+            give feedback
+          </Link>
+        </div>
       )
     },
   }
