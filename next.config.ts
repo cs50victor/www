@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/w',
-        destination: '/?tab=Writing',
+        destination: '/?tab=Thoughts',
         permanent: true,
       },
       {
