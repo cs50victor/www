@@ -1,5 +1,4 @@
 "use client"
-import { TextMorph } from "@/components/ui/text-morph"
 import { useEffect, useState } from "react"
 
 export function CopyButton() {
@@ -9,7 +8,7 @@ export function CopyButton() {
   useEffect(() => {
     setTimeout(() => {
       setText('Copy URL')
-    }, 2000)
+    }, 3000)
   }, [text])
 
   return (
@@ -21,7 +20,7 @@ export function CopyButton() {
       className="font-base flex items-center gap-1 text-center text-sm transition-colors text-foreground/50"
       type="button"
     >
-      <TextMorph>{text}</TextMorph>
+      {text}
     </button>
   )
 }
