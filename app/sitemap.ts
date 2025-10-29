@@ -19,11 +19,11 @@ async function getNoteSlugs(dir: string) {
 }
 
 export default async function sitemap() {
-  const writingDirectory = path.join(process.cwd(), 'app', 'w');
+  const writingDirectory = path.join(process.cwd(), 'app', 't');
   const slugs = await getNoteSlugs(writingDirectory);
 
   const notes = slugs.map((slug) => ({
-    url: `https://vic.so/w/${slug}`,
+    url: `https://vic.so/t/${slug}`,
     lastModified: new Date().toISOString(),
   }));
 

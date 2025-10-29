@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
 
 const nextConfig: NextConfig = {
-  pageExtensions: ['mdx','tsx'],
+  pageExtensions: ['mdx','tsx','ts'],
   async redirects() {
     return [
       {
@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
         destination: '/t/no-handbook',
         permanent: true,
       },
+      {
+        source: '/jamie',
+        destination: '/work/jamie',
+        permanent: true
+      }
     ]
   },
   experimental: {

@@ -143,10 +143,10 @@ export const SOCIAL_LINKS: SocialLink[] = [
     label: 'Twitter',
     link: 'https://twitter.com/vicdotso',
   },
-  {
-    label: 'LinkedIn',
-    link: 'https://www.linkedin.com/in/vicdotso',
-  },
+  // {
+  //   label: 'LinkedIn',
+  //   link: 'https://www.linkedin.com/in/vicdotso',
+  // },
   {
     label: 'Substack',
     link: 'https://vicdotso.substack.com/',

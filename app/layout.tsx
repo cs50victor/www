@@ -4,7 +4,7 @@ import type { Metadata, Viewport } from 'next'
 import { Footer } from './footer'
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from 'next-themes'
-import { Geist, Geist_Mono, Gowun_Batang, Mona_Sans } from 'next/font/google';
+import { Geist, Geist_Mono, Gowun_Batang, Mona_Sans, Bebas_Neue } from 'next/font/google';
 import { WEBSITE_URL } from '@/lib/constants'
 import localFont from 'next/font/local';
 
@@ -12,6 +12,12 @@ const monaSans = Mona_Sans({
   variable: '--font-mona-sans',
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800']
+});
+
+const bebasNeue = Bebas_Neue({
+  variable: '--font-bebas',
+  subsets: ['latin'],
+  weight: '400'
 });
 
 export const viewport: Viewport = {
@@ -92,9 +98,9 @@ export default function RootLayout({
 }>) {
   return (
     <ViewTransition>
-      <html 
-        lang="en" 
-        className={`${geistMono.variable} ${geistSans.variable} ${gowun.variable} ${monaSans.variable} tracking-tight antialiased`}
+      <html
+        lang="en"
+        className={`${geistMono.variable} ${geistSans.variable} ${gowun.variable} ${monaSans.variable} ${bebasNeue.variable} tracking-tight antialiased`}
         suppressHydrationWarning
       >
         <body
@@ -109,7 +115,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <div className="flex min-h-screen w-full flex-col">
-              <div className="relative mx-auto w-full max-w-screen-sm flex-1 px-4 pt-20">
+              <div className="page-shell relative mx-auto w-full max-w-screen-sm flex-1 px-4 pt-20">
                 {children}
                 <Footer />
                 <Analytics />

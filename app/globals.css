@@ -34,6 +34,7 @@
 
   --font-geist: var(--font-geist-sans), system-ui;
   --font-serif: var(--font-geist-serif), system-ui, serif;
+  --font-bebas: var(--font-bebas), sans-serif;
   --color-gray-area: var(--gray-area);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

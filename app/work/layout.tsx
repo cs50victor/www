@@ -19,7 +19,9 @@ export default function WorkLayout({
           <ArrowLeftIcon className="h-5 w-5 text-zinc-900 dark:text-zinc-100" />
         </Link>
       </div>
-      <main>
+      <main
+        data-full-width
+        className='relative left-1/2 w-screen max-w-[calc(100vw-20px)] -translate-x-1/2'>
         {children}
       </main>
     </>
