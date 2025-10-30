@@ -444,56 +444,56 @@ function RoomContent() {
   const [selectedQuery, setSelectedQuery] = useState<TimelineQuery | null>(null)
   const [seconds, setSeconds] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
-  // const { microphoneTrack } = useLocalParticipant()
+  const { microphoneTrack, localParticipant } = useLocalParticipant()
 
-  // const volume = useTrackVolume(microphoneTrack?.audioTrack)
-  // const volumeRef = useRef(0)
-  // volumeRef.current = volume
+  const volume = useTrackVolume(microphoneTrack?.audioTrack)
+  const volumeRef = useRef(0)
+  volumeRef.current = volume
 
-  // const transcriptDecoder = new TextDecoder()
-  // const searchDecoder = new TextDecoder()
+  const transcriptDecoder = new TextDecoder()
+  const searchDecoder = new TextDecoder()
 
-  // useDataChannel(TRANSCRIPT_TOPIC, (msg) => {
-  //   const text = transcriptDecoder.decode(msg.payload)
-  //   const data: TranscriptData = JSON.parse(text)
-  //   setTranscripts(prev => {
-  //     const existing = prev.findIndex(t => t.correlation_id === data.correlation_id)
-  //     if (existing >= 0) {
-  //       const updated = [...prev]
-  //       updated[existing] = data
-  //       return updated
-  //     }
-  //     return [...prev, data]
-  //   })
-  // })
+  useDataChannel(TRANSCRIPT_TOPIC, (msg) => {
+    const text = transcriptDecoder.decode(msg.payload)
+    const data: TranscriptData = JSON.parse(text)
+    setTranscripts(prev => {
+      const existing = prev.findIndex(t => t.correlation_id === data.correlation_id)
+      if (existing >= 0) {
+        const updated = [...prev]
+        updated[existing] = data
+        return updated
+      }
+      return [...prev, data]
+    })
+  })
 
-  // useDataChannel(SEARCH_TOPIC, (msg) => {
-  //   const text = searchDecoder.decode(msg.payload)
-  //   const data: SearchData = JSON.parse(text)
-  //   setSearches(prev => [...prev, data])
-  // })
+  useDataChannel(SEARCH_TOPIC, (msg) => {
+    const text = searchDecoder.decode(msg.payload)
+    const data: SearchData = JSON.parse(text)
+    setSearches(prev => [...prev, data])
+  })
 
-  // const timelineQueries = useMemo(() => {
-  //   const queryMap = new Map<string, TimelineQuery>()
+  const timelineQueries = useMemo(() => {
+    const queryMap = new Map<string, TimelineQuery>()
 
-  //   searches.forEach((search) => {
-  //     const existing = queryMap.get(search.query)
+    searches.forEach((search) => {
+      const existing = queryMap.get(search.query)
 
-  //     if (existing) {
-  //       existing.searches.push(search)
-  //     } else {
-  //       queryMap.set(search.query, {
-  //         query: search.query,
-  //         firstSeenAt: Date.now(),
-  //         searches: [search]
-  //       })
-  //     }
-  //   })
+      if (existing) {
+        existing.searches.push(search)
+      } else {
+        queryMap.set(search.query, {
+          query: search.query,
+          firstSeenAt: Date.now(),
+          searches: [search]
+        })
+      }
+    })
 
-  //   return Array.from(queryMap.values()).sort((a, b) => a.firstSeenAt - b.firstSeenAt)
-  // }, [searches])
+    return Array.from(queryMap.values()).sort((a, b) => a.firstSeenAt - b.firstSeenAt)
+  }, [searches])
 
-  const timelineQueries = sampleTimelineQueries;
+  // const timelineQueries = sampleTimelineQueries;
 
   useEffect(() => {
     if (isPaused) return
@@ -516,9 +516,14 @@ function RoomContent() {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
+  const pauseTimeline = (paused: boolean) => {
+    setIsPaused(paused)
+    localParticipant?.setMicrophoneEnabled(!paused)
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4">
-      <div className="-mt-62 relative flex w-full max-w-8xl flex-col items-center gap-8">
+      <div className="-mt-32 relative flex w-full max-w-8xl flex-col items-center gap-8">
         {timelineQueries.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 py-16">
             <p className="font-mono text-wrap text-xl text-zinc-600 dark:text-zinc-400 text-center max-w-md">
@@ -535,70 +540,69 @@ function RoomContent() {
                 <JamieHorizontalTimeline queries={timelineQueries} />
               </div>
             </div>
-
-            <div className="w-full flex flex-col items-center gap-4 mt-4">
-              <div className="text-7xl font-bebas tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center">
-                {Math.floor(seconds / 3600) > 0 && (
-                  <>
-                    <NumberFlow value={Math.floor(seconds / 3600)} />
-                    <span>:</span>
-                  </>
-                )}
-                <NumberFlow value={Math.floor((seconds % 3600) / 60)} format={{ minimumIntegerDigits: Math.floor(seconds / 3600) > 0 ? 2 : 1 }} />
-                <span>:</span>
-                <NumberFlow value={seconds % 60} format={{ minimumIntegerDigits: 2 }} />
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  aria-label={isPaused ? "Resume timer" : "Pause timer"}
-                  onClick={() => setIsPaused(p => !p)}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-900 dark:bg-zinc-100 transition-colors hover:bg-zinc-700 dark:hover:bg-zinc-300"
-                >
-                  {isPaused ? (
-                    <svg
-                      viewBox="0 0 12 14"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 fill-current text-zinc-100 dark:text-zinc-900"
-                    >
-                      <path d="M0.9375 13.2422C1.25 13.2422 1.51562 13.1172 1.82812 12.9375L10.9375 7.67188C11.5859 7.28906 11.8125 7.03906 11.8125 6.625C11.8125 6.21094 11.5859 5.96094 10.9375 5.58594L1.82812 0.3125C1.51562 0.132812 1.25 0.015625 0.9375 0.015625C0.359375 0.015625 0 0.453125 0 1.13281V12.1172C0 12.7969 0.359375 13.2422 0.9375 13.2422Z" />
-                    </svg>
-                  ) : (
-                    <svg
-                      viewBox="0 0 10 13"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 fill-current text-zinc-100 dark:text-zinc-900"
-                    >
-                      <path d="M1.03906 12.7266H2.82031C3.5 12.7266 3.85938 12.3672 3.85938 11.6797V1.03906C3.85938 0.328125 3.5 0 2.82031 0H1.03906C0.359375 0 0 0.359375 0 1.03906V11.6797C0 12.3672 0.359375 12.7266 1.03906 12.7266ZM6.71875 12.7266H8.49219C9.17969 12.7266 9.53125 12.3672 9.53125 11.6797V1.03906C9.53125 0.328125 9.17969 0 8.49219 0H6.71875C6.03125 0 5.67188 0.359375 5.67188 1.03906V11.6797C5.67188 12.3672 6.03125 12.7266 6.71875 12.7266Z" />
-                    </svg>
-                  )}
-                </button>
-                <button
-                  aria-label="Reset timer"
-                  onClick={() => {
-                    setSeconds(0)
-                    setIsPaused(false)
-                  }}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 stroke-current"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-              </div>
-            </div>
           </>
         )}
+        <div className="w-full flex flex-col items-center gap-4 mt-4">
+          <div className="text-7xl font-bebas tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center">
+            {Math.floor(seconds / 3600) > 0 && (
+              <>
+                <NumberFlow value={Math.floor(seconds / 3600)} />
+                <span>:</span>
+              </>
+            )}
+            <NumberFlow value={Math.floor((seconds % 3600) / 60)} format={{ minimumIntegerDigits: Math.floor(seconds / 3600) > 0 ? 2 : 1 }} />
+            <span>:</span>
+            <NumberFlow value={seconds % 60} format={{ minimumIntegerDigits: 2 }} />
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              aria-label={isPaused ? "Resume timer" : "Pause timer"}
+              onClick={() => pauseTimeline(!isPaused)}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-900 dark:bg-zinc-100 transition-colors hover:bg-zinc-700 dark:hover:bg-zinc-300"
+            >
+              {isPaused ? (
+                <svg
+                  viewBox="0 0 12 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 fill-current text-zinc-100 dark:text-zinc-900"
+                >
+                  <path d="M0.9375 13.2422C1.25 13.2422 1.51562 13.1172 1.82812 12.9375L10.9375 7.67188C11.5859 7.28906 11.8125 7.03906 11.8125 6.625C11.8125 6.21094 11.5859 5.96094 10.9375 5.58594L1.82812 0.3125C1.51562 0.132812 1.25 0.015625 0.9375 0.015625C0.359375 0.015625 0 0.453125 0 1.13281V12.1172C0 12.7969 0.359375 13.2422 0.9375 13.2422Z" />
+                </svg>
+              ) : (
+                <svg
+                  viewBox="0 0 10 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 fill-current text-zinc-100 dark:text-zinc-900"
+                >
+                  <path d="M1.03906 12.7266H2.82031C3.5 12.7266 3.85938 12.3672 3.85938 11.6797V1.03906C3.85938 0.328125 3.5 0 2.82031 0H1.03906C0.359375 0 0 0.359375 0 1.03906V11.6797C0 12.3672 0.359375 12.7266 1.03906 12.7266ZM6.71875 12.7266H8.49219C9.17969 12.7266 9.53125 12.3672 9.53125 11.6797V1.03906C9.53125 0.328125 9.17969 0 8.49219 0H6.71875C6.03125 0 5.67188 0.359375 5.67188 1.03906V11.6797C5.67188 12.3672 6.03125 12.7266 6.71875 12.7266Z" />
+                </svg>
+              )}
+            </button>
+            <button
+              aria-label="Reset timer"
+              onClick={() => {
+                setSeconds(0)
+                pauseTimeline(true)
+              }}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 stroke-current"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -631,7 +635,6 @@ function JamiePageContent() {
   if (room && token) {
     return <RoomPage room={room} token={token} />
   }
-  return <RoomContent />
 
   return <LandingPage />
 }
