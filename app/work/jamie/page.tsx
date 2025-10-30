@@ -531,7 +531,9 @@ function RoomContent() {
         ) : (
           <>
             <div className="w-full">
-              <JamieHorizontalTimeline queries={timelineQueries} />
+              <div className="ml-46">
+                <JamieHorizontalTimeline queries={timelineQueries} />
+              </div>
             </div>
 
             <div className="w-full flex flex-col items-center gap-4 mt-4">
