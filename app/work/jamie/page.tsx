@@ -164,7 +164,6 @@ function RoomContentCore({
   isModalOpen: boolean
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) {
-  const selectedQuery = selected !== null ? timelineQueries[selected] : null
 
   return (
     <>
@@ -259,7 +258,6 @@ function RoomContentCore({
       </div>
       <JamieTimelineModal
         isOpen={isModalOpen}
-        query={selectedQuery}
         onClose={() => setIsModalOpen(false)}
         allQueries={timelineQueries}
         currentIndex={selected ?? 0}

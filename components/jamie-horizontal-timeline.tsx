@@ -25,6 +25,19 @@ export type TimelineQuery = {
   searches: SearchPayload[]
 }
 
+export function formatJamieTimestamp(timestamp: number) {
+  const totalSeconds = Math.max(0, timestamp)
+  const hrs = Math.floor(totalSeconds / 3600)
+  const mins = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, "0")
+  const secs = totalSeconds % 60
+
+  if (hrs > 0) {
+    return `${hrs}:${mins}:${secs.toString().padStart(2, "0")}`
+  }
+
+  return `${mins}:${secs.toString().padStart(2, "0")}`
+}
+
 
 interface JamieHorizontalTimelineProps {
   queries: TimelineQuery[]
@@ -52,18 +65,7 @@ export function JamieHorizontalTimeline({ queries, selected, setSelected, setIsM
   const widthBasedOnTime = timelineRange > 0 ? secondsSpan * 80 : baseWidth
   const containerWidth = Math.min(Math.max(baseWidth, widthBasedOnTime), 20000)
 
-  const formatTimestamp = (timestamp: number) => {
-    const totalSeconds = Math.max(0, timestamp)
-    const hrs = Math.floor(totalSeconds / 3600)
-    const mins = Math.floor((totalSeconds % 3600) / 60)
-    const secs = totalSeconds % 60
-
-    if (hrs > 0) {
-      return `${hrs}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
-    }
-
-    return `${mins}:${secs.toString().padStart(2, "0")}`
-  }
+  const formatTimestamp = formatJamieTimestamp
 
   const trackWidth = Math.max(containerWidth - CARD_WIDTH - HORIZONTAL_GUTTER * 2, 0)
   const startCenter = HORIZONTAL_GUTTER + CARD_WIDTH / 2

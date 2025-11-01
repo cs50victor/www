@@ -11,7 +11,7 @@ export default function WorkLayout({
 }) {
   return (
     <>
-      <div className="absolute left-4 top-10 z-10">
+      <div className="absolute left-4 top-10">
         <Link
           href="/?tab=Work"
           className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700"
