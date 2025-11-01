@@ -151,5 +151,9 @@ export const SOCIAL_LINKS: SocialLink[] = [
     label: 'Substack',
     link: 'https://vicdotso.substack.com/',
   },
+  {
+    label: 'Cal',
+    link: 'https://cal.com/vic-tor/15min',
+  },
 ]
 
