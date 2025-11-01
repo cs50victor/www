@@ -37,9 +37,10 @@ export async function POST(req: NextRequest) {
     });
 
     if (!response.ok) {
+      const serverCode = response.status
       return NextResponse.json(
-        { error: 'Server error, please contact me' },
-        { status: response.status }
+        { error: `Server errored out [${serverCode}].` },
+        { status: serverCode }
       )
     }
 
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Error starting jamie worker:', error)
     return NextResponse.json(
-      { error: 'Server error, please contact me' },
+      { error: 'Server error' },
       { status: 500 }
     )
   }

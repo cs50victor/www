@@ -2,40 +2,58 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { JamieTimelineModal } from "./jamie-timeline-modal"
-import type { TimelineQuery } from "./query-timeline"
+
+export type SearchPayload = {
+  query: string
+  results: Array<{
+    title: string
+    url: string
+    snippet: string
+    published_at?: string
+  }>
+  images?: Array<{
+    imageUrl: string
+    originUrl: string
+    height: number
+    width: number
+  }>
+}
+
+export type TimelineQuery = {
+  query: string
+  firstSeenAtInSeconds: number
+  searches: SearchPayload[]
+}
+
 
 interface JamieHorizontalTimelineProps {
   queries: TimelineQuery[]
-  startTime?: number
+  selected: number | null
+  setSelected: React.Dispatch<React.SetStateAction<number | null>>
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function JamieHorizontalTimeline({ queries, startTime }: JamieHorizontalTimelineProps) {
+export function JamieHorizontalTimeline({ queries, selected, setSelected, setIsModalOpen }: JamieHorizontalTimelineProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  const [selected, setSelected] = useState<number | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
 
   if (queries.length === 0) return null
 
   const timelineItems = queries
     .map((query, originalIndex) => ({ query, originalIndex }))
-    .sort((a, b) => a.query.firstSeenAt - b.query.firstSeenAt)
+    .sort((a, b) => a.query.firstSeenAtInSeconds - b.query.firstSeenAtInSeconds)
 
-  const earliestSeenAt = timelineItems[0].query.firstSeenAt
-  const latestSeenAt = timelineItems[timelineItems.length - 1].query.firstSeenAt
-  const providedStart = typeof startTime === "number" ? startTime : earliestSeenAt
-  const effectiveStart = Math.min(providedStart, earliestSeenAt)
-  const timelineRange = Math.max(latestSeenAt - effectiveStart, 0)
-  const secondsSpan = timelineRange > 0 ? timelineRange / 1000 : Math.max(timelineItems.length - 1, 1)
+  const latestSeenAt = timelineItems[timelineItems.length - 1].query.firstSeenAtInSeconds
+  const timelineRange = Math.max(latestSeenAt, 0)
+  const secondsSpan = timelineRange > 0 ? timelineRange : Math.max(timelineItems.length - 1, 1)
   const CARD_WIDTH = 288 // matches tailwind w-72 (18rem)
-  const HORIZONTAL_GUTTER = 80
-  const MINOR_MARKER_SPACING = 8.5 // px target between filler ticks
+  const HORIZONTAL_GUTTER = 90
+  const MINOR_MARKER_SPACING = 8 // px target between filler ticks
   const baseWidth = Math.max(timelineItems.length * 240, CARD_WIDTH + HORIZONTAL_GUTTER * 2, 960)
   const widthBasedOnTime = timelineRange > 0 ? secondsSpan * 80 : baseWidth
   const containerWidth = Math.min(Math.max(baseWidth, widthBasedOnTime), 20000)
 
   const formatTimestamp = (timestamp: number) => {
-    const totalSeconds = Math.max(0, Math.floor((timestamp - effectiveStart) / 1000))
+    const totalSeconds = Math.max(0, timestamp)
     const hrs = Math.floor(totalSeconds / 3600)
     const mins = Math.floor((totalSeconds % 3600) / 60)
     const secs = totalSeconds % 60
@@ -56,7 +74,7 @@ export function JamieHorizontalTimeline({ queries, startTime }: JamieHorizontalT
       return startCenter + (trackWidth / (timelineItems.length - 1)) * idx
     }
 
-    const ratio = (item.query.firstSeenAt - effectiveStart) / (timelineRange || 1)
+    const ratio = item.query.firstSeenAtInSeconds / (timelineRange || 1)
     const clampedRatio = Math.min(Math.max(ratio, 0), 1)
     return startCenter + clampedRatio * trackWidth
   })
@@ -86,8 +104,6 @@ export function JamieHorizontalTimeline({ queries, startTime }: JamieHorizontalT
     setHoveredIndex(sortedIndex)
     setIsModalOpen(true)
   }
-
-  const selectedQuery = selected !== null ? queries[selected] : null
 
   return (
     <>
@@ -137,7 +153,7 @@ export function JamieHorizontalTimeline({ queries, startTime }: JamieHorizontalT
                   >
                     Question
                   </span>
-                  <h3 className="mt-2 text-lg font-semibold leading-snug text-inherit line-clamp-3">
+                  <h3 className="mt-2 font-medium leading-snug text-inherit line-clamp-3">
                     {query.query}
                   </h3>
                 </button>
@@ -165,16 +181,14 @@ export function JamieHorizontalTimeline({ queries, startTime }: JamieHorizontalT
                       transition={{ type: "spring", stiffness: 260, damping: 24 }}
                       style={{ height: "2.75rem" }}
                     />
-                    {(isHovered || isSelected) && (
                       <motion.span
                         className="absolute top-full mt-2 whitespace-nowrap text-[11px] font-bebas tracking-wide text-zinc-900 dark:text-zinc-100"
                         initial={{ opacity: 0, filter: "blur(4px)", y: 4 }}
                         animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
                         transition={{ duration: 0.15 }}
                       >
-                        {formatTimestamp(query.firstSeenAt)}
+                        {formatTimestamp(query.firstSeenAtInSeconds)}
                       </motion.span>
-                    )}
                   </button>
                 </div>
               </div>
@@ -182,14 +196,6 @@ export function JamieHorizontalTimeline({ queries, startTime }: JamieHorizontalT
           })}
         </div>
       </div>
-
-      <JamieTimelineModal
-        isOpen={isModalOpen}
-        query={selectedQuery}
-        onClose={() => setIsModalOpen(false)}
-        allQueries={queries}
-        currentIndex={selected ?? 0}
-      />
     </>
   )
 }
