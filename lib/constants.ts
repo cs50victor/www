@@ -52,6 +52,12 @@ export const CURSOR_IMAGES = {
 
 export const WORKS: Work[] = [
   {
+    name: 'jamie',
+    description: 'Live AI research companion that listens to conversations and provides real-time web searches. Built with LiveKit for real-time communication and features an interactive timeline UI for exploring search results.',
+    link: '/work/jamie',
+    video: '/jamie.png',
+  },
+  {
     name: 'kitt2',
     description: 'Real-time multimodal AI communication system using LiveKit. Renders 3D models into live video streams, enabling interactive AI avatars. Built with TypeScript and Python for the backend streaming capabilities.',
     link: 'https://github.com/cs50victor/kitt2',
