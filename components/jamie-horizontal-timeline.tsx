@@ -186,7 +186,7 @@ export function JamieHorizontalTimeline({ queries, selected, setSelected, setIsM
           style={{ marginLeft: `${HORIZONTAL_GUTTER}px`, marginRight: `${HORIZONTAL_GUTTER}px` }}
         >
           {queries.map((query, index) => {
-            const position = maxTime > 0 ? (query.firstSeenAtInSeconds / maxTime) * 100 : 0
+            const position = queries.length === 1 ? 0 : (maxTime > 0 ? (query.firstSeenAtInSeconds / maxTime) * 100 : 0)
             const isSelected = selected === index
             const isHovered = hoveredIndex === index
 
