@@ -25,7 +25,7 @@ export const NAME = 'Victor A.';
 export const PROFESSION = 'Software Engineer';
 export const ABOUT = `I'm a software engineer based in <cursor:washington>Washington</cursor>.
 
-Currently at <cursor:openinterpreter>Open Interpreter</cursor>, building more intuitive and accessible ways to interact with computers through AI. Also pursuing a Master's in Data Science.`;
+Currently at <cursor:openinterpreter>Open Interpreter</cursor>, building more intuitive and accessible ways to interact with computers using AI.`;
 
 export const CURSOR_IMAGES = {
   washington: {
