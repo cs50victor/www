@@ -1,0 +1,48 @@
+export const metadata = {
+  title: 'The Ceiling is A lot Higher',
+  description: 'Personal reflections on improving as an engineer.',
+  tags: ["tech"],
+  hero: true,
+  date: "10/21/2025",
+  openGraph: {
+    title: 'The Ceiling is A lot Higher',
+    description: 'Personal reflections on improving as an engineer.',
+    type: 'article',
+    url: 'https://vic.so/t/swe-ceiling',
+    publishedTime: '2025-10-21T00:00:00.000Z',
+    authors: ['Victor A.'],
+    tags: ["tech"],
+    images: [{ url: 'https://vic.so/t/swe-ceiling/quantum.jpg', width: 1200, height: 630, alt: 'Quantum Bugs' }],
+    siteName: 'Victor A.',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'The Ceiling is A lot Higher',
+    description: 'Personal reflections on improving as an engineer.',
+    images: ['https://vic.so/t/swe-ceiling/quantum.jpg'],
+  },
+};
+
+# The Ceiling is A Lot Higher
+
+> These are some off the cuff reflections from reading these articles:
+> - [Excellence is a Habit but so is Failure](https://awesomekling.github.io/Excellence-is-a-habit-but-so-is-failure)
+> - [What can strong engineers do that weak engineers can't](https://www.seangoedecke.com/weak-engineers/)
+> - [Magic Isn't Real](https://pthorpe92.dev/magic/)
+> - [Learn systems, not languages](https://pthorpe92.dev/learn-systems/)
+
+Until very recently, I suffered from the "I Could Land a Plane" syndrome[^1]. This is similar to the feeling you get when watching great athletes in sports and you think to yourself "If it really came down to it, I could do it". Like seeing a runner come second in the Olympics and thinking "they're only a few seconds faster than the winner—how hard could those few seconds really be to make up?" 
+I think this syndrome isn't equivalent to self-confidence but can easily mask itself as such, often fed by a history of getting somewhat outsized returns from medium-sized effort. This works because the median threshold for excellence is a lot easier to cross than it is to reach the pinnacle.
+
+The same physics applies to skill development. Water at 80°C will never reach boiling point at standard atmospheric pressure. There is simply no amount of wishing or waiting that can defy the laws of thermodynamics. This is a simple but mentally uncomfortable fact to accept. One might think, surely if it's on the heater for long enough it will boil, but this just isn't the case. You need to turn up the heat. This mirrors the 90/10 rule: 90% of the work needed to finish a project is in the last 10%. Getting water to 80°C is easy; that final push to 100°C requires disproportionate energy as heat losses accelerate exponentially.
+
+The ceiling for greatness in any field requires more work than you think, and more personally in the field of engineering. The initial breadth-first knowledge acquired in school or toy projects gets you a lot further than the average person but the work required to get really really good is often underestimated. 
+
+The ceiling is a lot higher than you think but it's still reachable, and acknowledging this gets you a step closer and well on your way.
+
+-------------------
+[^1]: [One-Third of People Think They Could Land a Plane if Their Pilots Became Incapacitated](https://viewfromthewing.com/one-third-of-people-think-they-could-land-a-plane-if-their-pilots-became-incapacitated/). View from the Wing.
+<EmailList isDev/>
+
+<EditContact slug="swe-ceiling"/>
