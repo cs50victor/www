@@ -1,0 +1,39 @@
+export const metadata = {
+  title: 'Claude Seasoning',
+  description: '',
+  tags: ["tech", "AI"],
+  hero: false,
+  date: "11/26/2025",
+};
+
+# Claude Seasoning
+
+---
+
+**NOTE TO SELF: Finish this blog post this weekend.**
+
+---
+
+## Rough Ideas
+
+- the "AGI" feeling - that sense of wonder/mystery about what makes Claude work so well
+- like a secret recipe you can't quite decode
+
+### Visual / Meme Concept
+
+The sensation when you:
+- drink something so good you stop and wonder "what's IN this thing?"
+- take a bite of food that's shockingly delicious and you're genuinely surprised by the quality
+- that moment of "wait... how is this so good?"
+
+### Vibe
+
+- mystery, wonder, slight disbelief
+- the "seasoning" metaphor: subtle layers, intentional design, unexpected depth
+- sensory, visceral - not abstract AI hype
+
+---
+
+<EmailList isDev/>
+
+<EditContact slug="claude-seasoning"/>
