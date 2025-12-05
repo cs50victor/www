@@ -17,7 +17,17 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/jamie',
-        destination: '/work/jamie',
+        destination: '/crafts/jamie',
+        permanent: true
+      },
+      {
+        source: '/work',
+        destination: '/crafts',
+        permanent: true
+      },
+      {
+        source: '/work/:path*',
+        destination: '/crafts/:path*',
         permanent: true
       }
     ]

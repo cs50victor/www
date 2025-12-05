@@ -160,7 +160,7 @@ export default function HomePage() {
 }
 
 function AnimatedTabsHover() {
-  const TABS = ['About', 'Work', 'Thoughts', 'Experience', 'Contact'] as const;
+  const TABS = ['About', 'Crafts', 'Thoughts', 'Experience', 'Contact'] as const;
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || TABS[0];
