@@ -9,3 +9,4 @@
 
 <!--some great reads -->
 <!--https://www.seangoedecke.com/the-simplest-thing-that-could-possibly-work/-->
+<!-- https://kunall.is/posts/not-art/ -->
