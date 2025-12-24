@@ -1,6 +1,7 @@
 import type { MDXComponents } from 'mdx/types'
 import Image from 'next/image'
-import { CodeSnippet } from './components/kibo-ui/snippet/code-snippet'
+import { CodeBlockContent } from './components/kibo-ui/code-block/server'
+import type { BundledLanguage } from 'shiki'
 import Link from 'next/link'
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
@@ -17,20 +18,20 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       />
     ),
     pre: ({ children }) => {
-      const codeContent = 
-        typeof children?.props?.children === 'string' ? 
-          children?.props?.children
+      const codeContent =
+        typeof children?.props?.children === 'string' ?
+          children?.props?.children?.trimEnd()
           : ""
-      const language = children?.props?.className?.replace("language-","") as string ?? "plaintext"
+      const language = (children?.props?.className?.replace("language-","") ?? "plaintext") as BundledLanguage
       return (
-        <CodeSnippet
-          commands={[
-            {
-              label: language,
-              code: codeContent,
-            }
-          ]}
-        />
+        <div className="my-4 overflow-hidden rounded-md border bg-secondary/30">
+          <CodeBlockContent
+            language={language}
+            className="[&_pre]:p-4 [&_pre]:overflow-x-auto [&_.line]:block [&_code]:text-sm"
+          >
+            {codeContent}
+          </CodeBlockContent>
+        </div>
       )
     },
     Cover: ({
