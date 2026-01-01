@@ -1,23 +1,16 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { XIcon } from 'lucide-react'
 import { Magnetic } from '@/components/ui/magnetic'
-import {
-  MorphingDialog,
-  MorphingDialogTrigger,
-  MorphingDialogContent,
-  MorphingDialogClose,
-  MorphingDialogContainer,
-} from '@/components/ui/morphing-dialog'
 import Link from 'next/link'
 import { AnimatedBackground } from '@/components/ui/animated-background'
-import { WORKS, WORK_EXPERIENCE, SOCIAL_LINKS, ABOUT } from '@/lib/constants'
+import { WORK_EXPERIENCE, SOCIAL_LINKS, ABOUT } from '@/lib/constants'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect } from 'react'
 import { CursorText } from '@/components/cursor-text'
 import { InfiniteSlider } from '@/components/motion-primitives/infinite-slider'
 import { ALL_WRITINGS } from './_w'
+import { BrutalistWorkGrid } from '@/components/brutalist-work-grid'
 
 const VARIANTS_CONTAINER = {
   hidden: { opacity: 0 },
@@ -36,74 +29,6 @@ const VARIANTS_SECTION = {
 
 const TRANSITION_SECTION = {
   duration: 0.3,
-}
-
-type WorkVideoProps = {
-  src: string
-}
-
-function WorkVideo({ src }: WorkVideoProps) {
-  const isImage = src.endsWith('.png') || src.endsWith('.jpg') || src.endsWith('.jpeg') || src.endsWith('.gif')
-
-  return (
-    <MorphingDialog
-      transition={{
-        type: 'spring',
-        bounce: 0,
-        duration: 0.3,
-      }}
-    >
-      <MorphingDialogTrigger>
-        {isImage ? (
-          <img
-            src={src}
-            alt="Work preview"
-            className="aspect-video w-full cursor-zoom-in rounded-xl object-cover"
-          />
-        ) : (
-          <video
-            src={src}
-            autoPlay
-            loop
-            muted
-            className="aspect-video w-full cursor-zoom-in rounded-xl"
-          />
-        )}
-      </MorphingDialogTrigger>
-      <MorphingDialogContainer>
-        <MorphingDialogContent className="relative aspect-video rounded-2xl bg-zinc-50 p-1 ring-1 ring-zinc-200/50 ring-inset dark:bg-zinc-950 dark:ring-zinc-800/50">
-          {isImage ? (
-            <img
-              src={src}
-              alt="Work preview"
-              className="aspect-video h-[50vh] w-full rounded-xl object-cover md:h-[70vh]"
-            />
-          ) : (
-            <video
-              src={src}
-              autoPlay
-              loop
-              muted
-              className="aspect-video h-[50vh] w-full rounded-xl md:h-[70vh]"
-            />
-          )}
-        </MorphingDialogContent>
-        <MorphingDialogClose
-          className="fixed top-6 right-6 h-fit w-fit rounded-full bg-white p-1"
-          variants={{
-            initial: { opacity: 0 },
-            animate: {
-              opacity: 1,
-              transition: { delay: 0.3, duration: 0.1 },
-            },
-            exit: { opacity: 0, transition: { duration: 0 } },
-          }}
-        >
-          <XIcon className="h-5 w-5 text-zinc-500" />
-        </MorphingDialogClose>
-      </MorphingDialogContainer>
-    </MorphingDialog>
-  )
 }
 
 function MagneticSocialLink({
@@ -160,7 +85,7 @@ export default function HomePage() {
 }
 
 function AnimatedTabsHover() {
-  const TABS = ['About', 'Crafts', 'Thoughts', 'Experience', 'Contact'] as const;
+  const TABS = ['About', 'Fun', 'Thoughts', 'Experience', 'Contact'] as const;
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || TABS[0];
@@ -230,28 +155,7 @@ function AnimatedTabsHover() {
           transition={TRANSITION_SECTION}
           key="work-section"
         >
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {WORKS.map((work) => (
-              <div key={work.name} className="space-y-2">
-                <div className="relative rounded-2xl bg-zinc-50/40 p-1 ring-1 ring-zinc-200/50 ring-inset dark:bg-zinc-950/40 dark:ring-zinc-800/50">
-                  <WorkVideo src={work.video} />
-                </div>
-                <div className="px-1">
-                  <a
-                    className="font-base group relative inline-block font-[450] text-zinc-900 dark:text-zinc-50"
-                    href={work.link}
-                    target="_blank"
-                  >
-                    {work.name}
-                    <span className="absolute bottom-0.5 left-0 block h-[1px] w-full max-w-0 bg-zinc-900 transition-all duration-200 group-hover:max-w-full"></span>
-                  </a>
-                  <p className="text-base text-zinc-600 dark:text-zinc-400">
-                    {work.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <BrutalistWorkGrid />
         </motion.section>
       )}
       

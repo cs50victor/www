@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "bun run app/_w.generator.ts &&  next dev --turbo",
+    "dev": "bun run app/_w.generator.ts &&  next dev --turbo --experimental-https",
     "build": "bun run app/_w.generator.ts && next build",
     "start": "next start",
     "lint": "next lint"
