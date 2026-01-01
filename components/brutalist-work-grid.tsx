@@ -9,6 +9,8 @@ type Project = {
   description: string
   link: string
   bgClass: string
+  fontVar: string
+  fontSize: string
   tag?: string
   tagColor?: string
 }
@@ -20,6 +22,8 @@ const PROJECTS: Project[] = [
     description: 'Real-time AI that listens to your conversations and searches the web.',
     link: 'https://github.com/cs50victor/jamie',
     bgClass: 'bg-stone-100',
+    fontVar: '--font-mona-sans',
+    fontSize: 'text-lg',
     tag: 'GitHub',
     tagColor: '#57534e',
   },
@@ -29,6 +33,8 @@ const PROJECTS: Project[] = [
     description: 'Multimodal AI with real-time 3D avatar rendering.',
     link: 'https://github.com/cs50victor/kitt2',
     bgClass: 'bg-stone-100',
+    fontVar: '--font-mona-sans',
+    fontSize: 'text-lg',
     tag: 'GitHub',
     tagColor: '#57534e',
   },
@@ -38,6 +44,8 @@ const PROJECTS: Project[] = [
     description: 'AI discovery platform indexing 300+ builder profiles.',
     link: 'https://github.com/cs50victor/buildspace',
     bgClass: 'bg-stone-100',
+    fontVar: '--font-mona-sans',
+    fontSize: 'text-lg',
     tag: 'GitHub',
     tagColor: '#b45309',
   },
@@ -68,7 +76,7 @@ export function BrutalistWorkGrid() {
             >
               <div className="flex items-start justify-between mb-8">
                 <div>
-                  <h3 className="font-[family-name:var(--font-geist-serif)] text-2xl text-zinc-900 tracking-tight">{project.name}</h3>
+                  <h3 className={`font-[family-name:var(${project.fontVar})] ${project.fontSize} text-zinc-900 tracking-tight`}>{project.name}</h3>
                   <p className="text-sm text-zinc-500">{project.year}</p>
                 </div>
                 <div className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 transition-colors">
@@ -81,12 +89,14 @@ export function BrutalistWorkGrid() {
                 </div>
               </div>
 
-              <p className="text-sm text-zinc-600 mb-4 leading-relaxed flex-grow">
+              <div className="grow" />
+
+              <p className="text-sm text-zinc-600 mb-2 leading-relaxed text-left">
                 {project.description}
               </p>
 
               {project.tag && (
-                <div className="mt-auto">
+                <div>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/80 text-xs font-medium text-zinc-600">
                     {project.tag === 'Try it live' && (
                       <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor">
@@ -94,7 +104,7 @@ export function BrutalistWorkGrid() {
                       </svg>
                     )}
                     {project.tag === 'GitHub' && (
-                      <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
                       </svg>
                     )}
