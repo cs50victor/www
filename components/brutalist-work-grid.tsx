@@ -17,6 +17,17 @@ type Project = {
 
 const PROJECTS: Project[] = [
   {
+    name: 'pdf speed reader',
+    year: '2025',
+    description: 'Read PDFs faster with a guided pacer that moves through text at your preferred WPM.',
+    link: '/fun/pdf-speed-reader',
+    bgClass: 'bg-stone-100',
+    fontVar: '--font-mona-sans',
+    fontSize: 'text-lg',
+    tag: 'Try it live',
+    tagColor: '#57534e',
+  },
+  {
     name: 'jamie',
     year: '2025',
     description: 'Real-time AI that listens to your conversations and searches the web.',
