@@ -17,8 +17,14 @@ export function usePacer({ chunks, wpm, onChunkChange, onComplete }: UsePacerOpt
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const currentIndexRef = useRef(0)
   const wpmRef = useRef(wpm)
+  const isPlayingRef = useRef(false)
+  const onChunkChangeRef = useRef(onChunkChange)
+  const onCompleteRef = useRef(onComplete)
 
   wpmRef.current = wpm
+  isPlayingRef.current = isPlaying
+  onChunkChangeRef.current = onChunkChange
+  onCompleteRef.current = onComplete
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -29,6 +35,7 @@ export function usePacer({ chunks, wpm, onChunkChange, onComplete }: UsePacerOpt
 
   const scheduleNext = useCallback(() => {
     if (chunks.length === 0) return
+    if (!isPlayingRef.current) return
 
     const idx = currentIndexRef.current
     const currentChunk = chunks[idx]
@@ -37,19 +44,21 @@ export function usePacer({ chunks, wpm, onChunkChange, onComplete }: UsePacerOpt
     const duration = calculateChunkDuration(currentChunk, wpmRef.current)
 
     timerRef.current = setTimeout(() => {
+      if (!isPlayingRef.current) return
+
       const nextIndex = currentIndexRef.current + 1
       if (nextIndex >= chunks.length) {
         setIsPlaying(false)
-        onComplete?.()
+        onCompleteRef.current?.()
         return
       }
 
       currentIndexRef.current = nextIndex
       setCurrentChunkIndex(nextIndex)
-      onChunkChange?.(nextIndex)
+      onChunkChangeRef.current?.(nextIndex)
       scheduleNext()
     }, duration)
-  }, [chunks, onChunkChange, onComplete])
+  }, [chunks])
 
   const play = useCallback(() => {
     if (chunks.length === 0) return
@@ -66,8 +75,8 @@ export function usePacer({ chunks, wpm, onChunkChange, onComplete }: UsePacerOpt
     clearTimer()
     currentIndexRef.current = 0
     setCurrentChunkIndex(0)
-    onChunkChange?.(0)
-  }, [clearTimer, onChunkChange])
+    onChunkChangeRef.current?.(0)
+  }, [clearTimer])
 
   const jumpToChunk = useCallback(
     (index: number) => {
@@ -75,12 +84,12 @@ export function usePacer({ chunks, wpm, onChunkChange, onComplete }: UsePacerOpt
       clearTimer()
       currentIndexRef.current = index
       setCurrentChunkIndex(index)
-      onChunkChange?.(index)
-      if (isPlaying) {
+      onChunkChangeRef.current?.(index)
+      if (isPlayingRef.current) {
         scheduleNext()
       }
     },
-    [chunks.length, clearTimer, onChunkChange, isPlaying, scheduleNext]
+    [chunks.length, clearTimer, scheduleNext]
   )
 
   useEffect(() => {
@@ -89,7 +98,8 @@ export function usePacer({ chunks, wpm, onChunkChange, onComplete }: UsePacerOpt
       scheduleNext()
     }
     return clearTimer
-  }, [isPlaying, chunks.length, clearTimer, scheduleNext])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying, chunks.length])
 
   useEffect(() => {
     currentIndexRef.current = currentChunkIndex

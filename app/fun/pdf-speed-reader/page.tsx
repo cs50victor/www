@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { UploadZone } from './components/upload-zone'
 import { SpeedControls } from './components/speed-controls'
@@ -27,14 +27,19 @@ export default function PdfSpeedReaderPage() {
 
   const { chunks, containerRef, extractChunks, resetChunks } = usePdfChunks()
   const { savedState, savedFile, isLoading, saveState, clearState } = usePersistence()
+  const isAutoScrollingRef = useRef(false)
 
   const scrollToChunk = useCallback((chunk: WordChunk) => {
     if (!containerRef.current) return
+    isAutoScrollingRef.current = true
     const viewportHeight = containerRef.current.clientHeight
     containerRef.current.scrollTo({
       top: chunk.y - viewportHeight / 3,
       behavior: 'smooth',
     })
+    setTimeout(() => {
+      isAutoScrollingRef.current = false
+    }, 400)
   }, [containerRef])
 
   const {
@@ -59,6 +64,28 @@ export default function PdfSpeedReaderPage() {
       setShowResumePrompt(true)
     }
   }, [isLoading, savedState, pdfSource])
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    let scrollTimeout: ReturnType<typeof setTimeout>
+
+    const handleScroll = () => {
+      clearTimeout(scrollTimeout)
+      scrollTimeout = setTimeout(() => {
+        if (!isAutoScrollingRef.current && isPlaying) {
+          pause()
+        }
+      }, 100)
+    }
+
+    container.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      container.removeEventListener('scroll', handleScroll)
+      clearTimeout(scrollTimeout)
+    }
+  }, [containerRef, isPlaying, pause])
 
   useEffect(() => {
     if (pdfSource && chunks.length > 0 && currentChunkIndex > 0) {
