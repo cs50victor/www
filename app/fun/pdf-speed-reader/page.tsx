@@ -5,10 +5,10 @@ import dynamic from 'next/dynamic'
 import { UploadZone } from './components/upload-zone'
 import { SpeedControls } from './components/speed-controls'
 import { PacerOverlay } from './components/pacer-overlay'
-import { usePdfLines } from './hooks/use-pdf-lines'
+import { usePdfChunks } from './hooks/use-pdf-lines'
 import { usePacer } from './hooks/use-pacer'
 import { usePersistence } from './hooks/use-persistence'
-import type { LineData } from './lib/types'
+import type { WordChunk } from './lib/types'
 
 const PdfViewer = dynamic(
   () => import('./components/pdf-viewer').then((mod) => mod.PdfViewer),
@@ -18,38 +18,39 @@ const PdfViewer = dynamic(
 export default function PdfSpeedReaderPage() {
   const [pdfSource, setPdfSource] = useState<File | string | null>(null)
   const [pdfFile, setPdfFile] = useState<File | null>(null)
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [numPages, setNumPages] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [wpm, setWpm] = useState(300)
   const [containerHeight, setContainerHeight] = useState(0)
   const [showResumePrompt, setShowResumePrompt] = useState(false)
 
-  const { lines, containerRef, extractLines, resetLines } = usePdfLines()
+  const { chunks, containerRef, extractChunks, resetChunks } = usePdfChunks()
   const { savedState, savedFile, isLoading, saveState, clearState } = usePersistence()
 
-  const scrollToLine = useCallback((line: LineData) => {
+  const scrollToChunk = useCallback((chunk: WordChunk) => {
     if (!containerRef.current) return
     const viewportHeight = containerRef.current.clientHeight
     containerRef.current.scrollTo({
-      top: line.yPosition - viewportHeight / 3,
+      top: chunk.y - viewportHeight / 3,
       behavior: 'smooth',
     })
   }, [containerRef])
 
   const {
-    currentLineIndex,
+    currentChunkIndex,
     isPlaying,
     play,
     pause,
     stop,
-    jumpToLine,
-    setCurrentLineIndex,
+    jumpToChunk,
+    setCurrentChunkIndex,
   } = usePacer({
-    lines,
+    chunks,
     wpm,
-    onLineChange: (index) => {
-      const line = lines[index]
-      if (line) scrollToLine(line)
+    onChunkChange: (index) => {
+      const chunk = chunks[index]
+      if (chunk) scrollToChunk(chunk)
     },
   })
 
@@ -60,22 +61,31 @@ export default function PdfSpeedReaderPage() {
   }, [isLoading, savedState, pdfSource])
 
   useEffect(() => {
-    if (pdfSource && lines.length > 0 && currentLineIndex > 0) {
-      const pdfUrl = typeof pdfSource === 'string' ? pdfSource : undefined
-      const pdfName = pdfFile?.name
-      saveState({ pdfUrl, pdfName, currentLineIndex, wpm }, pdfFile || undefined)
+    if (pdfSource && chunks.length > 0 && currentChunkIndex > 0) {
+      const pdfName = (() => {
+        if (pdfFile?.name) return pdfFile.name
+        if (!pdfUrl) return undefined
+        try {
+          return new URL(pdfUrl).pathname.split('/').pop()
+        } catch {
+          return undefined
+        }
+      })()
+      saveState({ pdfUrl: pdfUrl ?? undefined, pdfName, currentLineIndex: currentChunkIndex, wpm }, pdfFile || undefined)
     }
-  }, [currentLineIndex, wpm, pdfSource, pdfFile, lines.length, saveState])
+  }, [currentChunkIndex, wpm, pdfSource, pdfFile, pdfUrl, chunks.length, saveState])
 
   const handleResume = useCallback(() => {
     setShowResumePrompt(false)
     if (savedState) {
       setWpm(savedState.wpm)
       if (savedState.pdfUrl) {
-        setPdfSource(savedState.pdfUrl)
+        setPdfUrl(savedState.pdfUrl)
+        setPdfSource(`/api/pdf-proxy?url=${encodeURIComponent(savedState.pdfUrl)}`)
       } else if (savedFile) {
         setPdfSource(savedFile)
         setPdfFile(savedFile)
+        setPdfUrl(null)
       }
     }
   }, [savedState, savedFile])
@@ -87,39 +97,42 @@ export default function PdfSpeedReaderPage() {
 
   const handleFileSelect = useCallback((file: File) => {
     setError(null)
-    resetLines()
+    resetChunks()
     setPdfSource(file)
     setPdfFile(file)
-  }, [resetLines])
+    setPdfUrl(null)
+  }, [resetChunks])
 
   const handleUrlSubmit = useCallback((url: string) => {
     setError(null)
-    resetLines()
-    setPdfSource(url)
+    resetChunks()
+    setPdfUrl(url)
+    setPdfSource(`/api/pdf-proxy?url=${encodeURIComponent(url)}`)
     setPdfFile(null)
-  }, [resetLines])
+  }, [resetChunks])
 
   const handleLoadSuccess = useCallback((pages: number) => {
     setNumPages(pages)
   }, [])
 
   const handleAllPagesRendered = useCallback(() => {
-    extractLines()
+    extractChunks()
     if (containerRef.current) {
       setContainerHeight(containerRef.current.scrollHeight)
     }
     if (savedState && savedState.currentLineIndex > 0) {
       setTimeout(() => {
-        setCurrentLineIndex(savedState.currentLineIndex)
-        const line = lines[savedState.currentLineIndex]
-        if (line) scrollToLine(line)
+        setCurrentChunkIndex(savedState.currentLineIndex)
+        const chunk = chunks[savedState.currentLineIndex]
+        if (chunk) scrollToChunk(chunk)
       }, 100)
     }
-  }, [extractLines, containerRef, savedState, setCurrentLineIndex, lines, scrollToLine])
+  }, [extractChunks, containerRef, savedState, setCurrentChunkIndex, chunks, scrollToChunk])
 
   const handleError = useCallback((err: string) => {
     setError(err)
     setPdfSource(null)
+    setPdfUrl(null)
   }, [])
 
   const handlePlayPause = useCallback(() => {
@@ -137,33 +150,37 @@ export default function PdfSpeedReaderPage() {
 
   const handleContainerClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (lines.length === 0) return
+      if (chunks.length === 0) return
       if (!containerRef.current) return
 
       const rect = containerRef.current.getBoundingClientRect()
       const clickY = e.clientY - rect.top + containerRef.current.scrollTop
+      const clickX = e.clientX - rect.left
 
       let closestIndex = 0
       let closestDistance = Infinity
 
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i]
-        const lineCenter = line.yPosition + line.height / 2
-        const distance = Math.abs(clickY - lineCenter)
+      for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i]
+        const chunkCenterY = chunk.y + chunk.height / 2
+        const chunkCenterX = chunk.x + chunk.width / 2
+        const distanceY = Math.abs(clickY - chunkCenterY)
+        const distanceX = Math.abs(clickX - chunkCenterX)
+        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY)
         if (distance < closestDistance) {
           closestDistance = distance
           closestIndex = i
         }
       }
 
-      jumpToLine(closestIndex)
+      jumpToChunk(closestIndex)
     },
-    [lines, containerRef, jumpToLine]
+    [chunks, containerRef, jumpToChunk]
   )
 
   const currentPage =
-    lines.length > 0 && lines[currentLineIndex]
-      ? lines[currentLineIndex].pageIndex + 1
+    chunks.length > 0 && chunks[currentChunkIndex]
+      ? chunks[currentChunkIndex].pageIndex + 1
       : 1
 
   if (isLoading) {
@@ -222,10 +239,10 @@ export default function PdfSpeedReaderPage() {
           onAllPagesRendered={handleAllPagesRendered}
           onError={handleError}
         >
-          {lines.length > 0 && (
+          {chunks.length > 0 && (
             <PacerOverlay
-              lines={lines}
-              currentLineIndex={currentLineIndex}
+              chunks={chunks}
+              currentChunkIndex={currentChunkIndex}
               containerHeight={containerHeight}
             />
           )}

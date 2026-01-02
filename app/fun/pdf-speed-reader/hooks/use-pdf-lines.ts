@@ -1,15 +1,15 @@
 'use client'
 
 import { useState, useCallback, useRef } from 'react'
-import type { LineData } from '../lib/types'
-import { extractLinesFromContainer } from '../lib/line-detection'
+import type { WordChunk } from '../lib/types'
+import { extractChunksFromContainer } from '../lib/line-detection'
 
-export function usePdfLines() {
-  const [lines, setLines] = useState<LineData[]>([])
+export function usePdfChunks() {
+  const [chunks, setChunks] = useState<WordChunk[]>([])
   const [isExtracting, setIsExtracting] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const extractLines = useCallback(() => {
+  const extractChunks = useCallback(() => {
     if (!containerRef.current) return
 
     setIsExtracting(true)
@@ -20,21 +20,21 @@ export function usePdfLines() {
         return
       }
 
-      const extracted = extractLinesFromContainer(containerRef.current)
-      setLines(extracted)
+      const extracted = extractChunksFromContainer(containerRef.current)
+      setChunks(extracted)
       setIsExtracting(false)
     })
   }, [])
 
-  const resetLines = useCallback(() => {
-    setLines([])
+  const resetChunks = useCallback(() => {
+    setChunks([])
   }, [])
 
   return {
-    lines,
+    chunks,
     isExtracting,
     containerRef,
-    extractLines,
-    resetLines,
+    extractChunks,
+    resetChunks,
   }
 }

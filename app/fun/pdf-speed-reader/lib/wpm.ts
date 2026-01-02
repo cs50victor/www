@@ -1,8 +1,8 @@
-import type { LineData } from './types'
+import type { WordChunk } from './types'
 
-export function calculateLineDuration(line: LineData, wpm: number): number {
+export function calculateChunkDuration(chunk: WordChunk, wpm: number): number {
   const msPerWord = 60000 / wpm
-  return Math.max(line.wordCount * msPerWord, 200)
+  return Math.max(chunk.wordCount * msPerWord, 150)
 }
 
 export function countWords(text: string): number {

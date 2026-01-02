@@ -7,6 +7,17 @@ export type LineData = {
   textContent: string
 }
 
+export type WordChunk = {
+  index: number
+  pageIndex: number
+  x: number
+  y: number
+  width: number
+  height: number
+  wordCount: number
+  textContent: string
+}
+
 export type ReaderState = {
   pdfSource: File | string | null
   numPages: number

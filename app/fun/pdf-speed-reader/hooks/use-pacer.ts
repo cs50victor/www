@@ -1,20 +1,24 @@
 'use client'
 
 import { useState, useCallback, useRef, useEffect } from 'react'
-import type { LineData } from '../lib/types'
-import { calculateLineDuration } from '../lib/wpm'
+import type { WordChunk } from '../lib/types'
+import { calculateChunkDuration } from '../lib/wpm'
 
 type UsePacerOptions = {
-  lines: LineData[]
+  chunks: WordChunk[]
   wpm: number
-  onLineChange?: (lineIndex: number) => void
+  onChunkChange?: (chunkIndex: number) => void
   onComplete?: () => void
 }
 
-export function usePacer({ lines, wpm, onLineChange, onComplete }: UsePacerOptions) {
-  const [currentLineIndex, setCurrentLineIndex] = useState(0)
+export function usePacer({ chunks, wpm, onChunkChange, onComplete }: UsePacerOptions) {
+  const [currentChunkIndex, setCurrentChunkIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const currentIndexRef = useRef(0)
+  const wpmRef = useRef(wpm)
+
+  wpmRef.current = wpm
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -23,36 +27,34 @@ export function usePacer({ lines, wpm, onLineChange, onComplete }: UsePacerOptio
     }
   }, [])
 
-  const scheduleNextLine = useCallback(() => {
-    if (lines.length === 0) return
+  const scheduleNext = useCallback(() => {
+    if (chunks.length === 0) return
 
-    setCurrentLineIndex((prevIndex) => {
-      const currentLine = lines[prevIndex]
-      if (!currentLine) return prevIndex
+    const idx = currentIndexRef.current
+    const currentChunk = chunks[idx]
+    if (!currentChunk) return
 
-      const duration = calculateLineDuration(currentLine, wpm)
+    const duration = calculateChunkDuration(currentChunk, wpmRef.current)
 
-      timerRef.current = setTimeout(() => {
-        const nextIndex = prevIndex + 1
-        if (nextIndex >= lines.length) {
-          setIsPlaying(false)
-          onComplete?.()
-          return
-        }
+    timerRef.current = setTimeout(() => {
+      const nextIndex = currentIndexRef.current + 1
+      if (nextIndex >= chunks.length) {
+        setIsPlaying(false)
+        onComplete?.()
+        return
+      }
 
-        setCurrentLineIndex(nextIndex)
-        onLineChange?.(nextIndex)
-        scheduleNextLine()
-      }, duration)
-
-      return prevIndex
-    })
-  }, [lines, wpm, onLineChange, onComplete])
+      currentIndexRef.current = nextIndex
+      setCurrentChunkIndex(nextIndex)
+      onChunkChange?.(nextIndex)
+      scheduleNext()
+    }, duration)
+  }, [chunks, onChunkChange, onComplete])
 
   const play = useCallback(() => {
-    if (lines.length === 0) return
+    if (chunks.length === 0) return
     setIsPlaying(true)
-  }, [lines])
+  }, [chunks])
 
   const pause = useCallback(() => {
     setIsPlaying(false)
@@ -62,44 +64,44 @@ export function usePacer({ lines, wpm, onLineChange, onComplete }: UsePacerOptio
   const stop = useCallback(() => {
     setIsPlaying(false)
     clearTimer()
-    setCurrentLineIndex(0)
-    onLineChange?.(0)
-  }, [clearTimer, onLineChange])
+    currentIndexRef.current = 0
+    setCurrentChunkIndex(0)
+    onChunkChange?.(0)
+  }, [clearTimer, onChunkChange])
 
-  const jumpToLine = useCallback(
+  const jumpToChunk = useCallback(
     (index: number) => {
-      if (index < 0 || index >= lines.length) return
+      if (index < 0 || index >= chunks.length) return
       clearTimer()
-      setCurrentLineIndex(index)
-      onLineChange?.(index)
+      currentIndexRef.current = index
+      setCurrentChunkIndex(index)
+      onChunkChange?.(index)
       if (isPlaying) {
-        setTimeout(scheduleNextLine, 0)
+        scheduleNext()
       }
     },
-    [lines.length, clearTimer, onLineChange, isPlaying, scheduleNextLine]
+    [chunks.length, clearTimer, onChunkChange, isPlaying, scheduleNext]
   )
 
   useEffect(() => {
-    if (isPlaying && lines.length > 0) {
-      scheduleNextLine()
+    if (isPlaying && chunks.length > 0) {
+      clearTimer()
+      scheduleNext()
     }
     return clearTimer
-  }, [isPlaying, scheduleNextLine, clearTimer, lines.length])
+  }, [isPlaying, chunks.length, clearTimer, scheduleNext])
 
   useEffect(() => {
-    if (isPlaying) {
-      clearTimer()
-      scheduleNextLine()
-    }
-  }, [wpm, isPlaying, clearTimer, scheduleNextLine])
+    currentIndexRef.current = currentChunkIndex
+  }, [currentChunkIndex])
 
   return {
-    currentLineIndex,
+    currentChunkIndex,
     isPlaying,
     play,
     pause,
     stop,
-    jumpToLine,
-    setCurrentLineIndex,
+    jumpToChunk,
+    setCurrentChunkIndex,
   }
 }
