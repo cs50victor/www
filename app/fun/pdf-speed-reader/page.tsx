@@ -256,30 +256,11 @@ export default function PdfSpeedReaderPage() {
     )
   }
 
-  const isParsing = isExtracting || (numPages > 0 && chunks.length === 0)
-
-  if (isParsing) {
-    return (
-      <div className="relative">
-        <div className="invisible">
-          <PdfViewer
-            ref={containerRef}
-            source={pdfSource}
-            onLoadSuccess={handleLoadSuccess}
-            onAllPagesRendered={handleAllPagesRendered}
-            onError={handleError}
-          />
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center bg-white">
-          <p className="text-zinc-500">Parsing PDF...</p>
-        </div>
-      </div>
-    )
-  }
+  const isReady = chunks.length > 0
 
   return (
     <div className="relative">
-      <div onClick={handleContainerClick} className="cursor-pointer">
+      <div onClick={isReady ? handleContainerClick : undefined} className={isReady ? 'cursor-pointer' : ''}>
         <PdfViewer
           ref={containerRef}
           source={pdfSource}
@@ -287,23 +268,33 @@ export default function PdfSpeedReaderPage() {
           onAllPagesRendered={handleAllPagesRendered}
           onError={handleError}
         >
-          <PacerOverlay
-            chunks={chunks}
-            currentChunkIndex={currentChunkIndex}
-            containerHeight={containerHeight}
-          />
+          {isReady && (
+            <PacerOverlay
+              chunks={chunks}
+              currentChunkIndex={currentChunkIndex}
+              containerHeight={containerHeight}
+            />
+          )}
         </PdfViewer>
       </div>
 
-      <SpeedControls
-        isPlaying={isPlaying}
-        wpm={wpm}
-        currentPage={currentPage}
-        totalPages={numPages}
-        onPlayPause={handlePlayPause}
-        onStop={handleStop}
-        onWpmChange={setWpm}
-      />
+      {!isReady && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/90">
+          <p className="text-zinc-500">Parsing PDF...</p>
+        </div>
+      )}
+
+      {isReady && (
+        <SpeedControls
+          isPlaying={isPlaying}
+          wpm={wpm}
+          currentPage={currentPage}
+          totalPages={numPages}
+          onPlayPause={handlePlayPause}
+          onStop={handleStop}
+          onWpmChange={setWpm}
+        />
+      )}
     </div>
   )
 }
