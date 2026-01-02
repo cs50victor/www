@@ -39,7 +39,7 @@ export default function PdfSpeedReaderPage() {
     })
     setTimeout(() => {
       isAutoScrollingRef.current = false
-    }, 400)
+    }, 600)
   }, [containerRef])
 
   const {
@@ -68,24 +68,11 @@ export default function PdfSpeedReaderPage() {
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
-
-    let scrollTimeout: ReturnType<typeof setTimeout>
-
-    const handleScroll = () => {
-      clearTimeout(scrollTimeout)
-      scrollTimeout = setTimeout(() => {
-        if (!isAutoScrollingRef.current && isPlaying) {
-          pause()
-        }
-      }, 100)
-    }
-
-    container.addEventListener('scroll', handleScroll, { passive: true })
+    container.style.overflowY = isPlaying ? 'hidden' : 'auto'
     return () => {
-      container.removeEventListener('scroll', handleScroll)
-      clearTimeout(scrollTimeout)
+      container.style.overflowY = 'auto'
     }
-  }, [containerRef, isPlaying, pause])
+  }, [containerRef, isPlaying])
 
   useEffect(() => {
     if (pdfSource && chunks.length > 0 && currentChunkIndex > 0) {
@@ -179,6 +166,7 @@ export default function PdfSpeedReaderPage() {
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (chunks.length === 0) return
       if (!containerRef.current) return
+      if (!containerRef.current.contains(e.target as Node)) return
 
       const rect = containerRef.current.getBoundingClientRect()
       const clickY = e.clientY - rect.top + containerRef.current.scrollTop

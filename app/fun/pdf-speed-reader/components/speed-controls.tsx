@@ -23,7 +23,7 @@ export function SpeedControls({
   onWpmChange,
 }: SpeedControlsProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t border-zinc-200 bg-white/90 backdrop-blur-sm">
+    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-white/90 backdrop-blur-sm">
       <div className="mx-auto flex max-w-screen-md items-center justify-between gap-4 px-4 py-3">
         <div className="flex items-center gap-2">
           <button
