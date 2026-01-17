@@ -9,6 +9,10 @@
 <!-- ai-sdk.dev -->
 <!-- kibo-ui.com -->
 
+<!-- design inspo -->
+<!-- https://tympanus.net/codrops/webzibition/ -->
+<!-- https://godly.website/ -->
+
 <!--some great reads -->
 <!--https://www.seangoedecke.com/the-simplest-thing-that-could-possibly-work/-->
 <!-- https://kunall.is/posts/not-art/ -->
