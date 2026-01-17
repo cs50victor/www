@@ -1,5 +1,7 @@
 'use client'
 
+const ENABLE_PRELOADER = false
+
 import { motion } from 'motion/react'
 import { Magnetic } from '@/components/ui/magnetic'
 import Link from 'next/link'
@@ -11,6 +13,7 @@ import { CursorText } from '@/components/cursor-text'
 import { InfiniteSlider } from '@/components/motion-primitives/infinite-slider'
 import { ALL_WRITINGS } from './_w'
 import { BrutalistWorkGrid } from '@/components/brutalist-work-grid'
+import { ChromePreloader } from '@/components/chrome-preloader'
 
 const VARIANTS_CONTAINER = {
   hidden: { opacity: 0 },
@@ -67,20 +70,22 @@ function MagneticSocialLink({
 
 export default function HomePage() {
   return (
-    <Suspense
-      fallback={(
-        <div className='animate-pulse'></div>
-      )}
-    >
-      <motion.main
-        variants={VARIANTS_CONTAINER}
-        className='mt-30 mb-40 overflow-x-clip'
-        initial="hidden"
-        animate="visible"
+    <ChromePreloader enabled={ENABLE_PRELOADER}>
+      <Suspense
+        fallback={(
+          <div className='animate-pulse'></div>
+        )}
       >
-        <AnimatedTabsHover />
-      </motion.main>
-    </Suspense>
+        <motion.main
+          variants={VARIANTS_CONTAINER}
+          className='mt-30 mb-40 overflow-x-clip'
+          initial="hidden"
+          animate="visible"
+        >
+          <AnimatedTabsHover />
+        </motion.main>
+      </Suspense>
+    </ChromePreloader>
   )
 }
 
