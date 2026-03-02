@@ -172,37 +172,39 @@ function AnimatedTabsHover() {
           transition={TRANSITION_SECTION}
           key="writing-section"
         >
-          <div className="flex flex-col space-y-0">
-            <p className='max-w-9/12 mb-6 mx-auto text-foreground/70'>
-              <q>If you&apos;re thinking without writing, you only think you&apos;re thinking.</q>
-              <br />
-              - <cite>Leslie Lamport</cite>
-            </p>
-            <AnimatedBackground
-              enableHover
-              className="h-full w-full rounded-lg bg-foreground/5 goup-hover"
-              transition={{
-                type: 'spring',
-                bounce: 0,
-                duration: 0.2,
-              }}
-            >
-              {ALL_WRITINGS.map((post, i) => (
-                <Link
-                  key={`w-${i}`}
-                  className="writing item-mx-3 block  px-3 py-4 group border-b-1 border-b-accent hover:rounded-xl hover:border-zinc-900/50 hover:border-b-0"
-                  href={post.slug}
-                  data-id={`w-${i}`}
-                >
-                  <div className="flex flex-col space-y-1">
-                    <div>
-                      <h4 className="inline-block font-normal">{post.title}</h4>
-                    </div>
-                    <p className="text-zinc-500 dark:text-zinc-400">{post.description}</p>
+          <div className="group/list flex flex-col max-w-xl mx-auto">
+            {(() => {
+              const grouped: Record<string, Array<typeof ALL_WRITINGS[number] & { day: string; month: string; year: string }>> = {}
+              for (const post of ALL_WRITINGS) {
+                const [month, day, year] = post.date.split('/')
+                if (!grouped[year]) grouped[year] = []
+                grouped[year].push({ ...post, day, month, year })
+              }
+              return Object.entries(grouped)
+                .sort(([a], [b]) => Number(b) - Number(a))
+                .map(([year, posts]) => (
+                  <div key={year}>
+                    {posts.map((post, i) => (
+                      <Link
+                        key={post.slug}
+                        href={post.slug}
+                        className="grid grid-cols-[3.5rem_1fr_auto] items-start border-b border-zinc-200 dark:border-zinc-800 py-3 transition-opacity duration-300 group-hover/list:opacity-20 hover:!opacity-100"
+                      >
+                        <span className="text-sm text-zinc-400 dark:text-zinc-500">
+                          {i === 0 ? year : ''}
+                        </span>
+                        <div className="min-w-0">
+                          <span>{post.title}</span>
+                          <p className="text-sm text-zinc-400 dark:text-zinc-500 truncate">{post.description}</p>
+                        </div>
+                        <span className="text-sm text-zinc-400 dark:text-zinc-500 tabular-nums ml-4 self-start">
+                          {post.day}/{post.month}
+                        </span>
+                      </Link>
+                    ))}
                   </div>
-                </Link>
-              ))}
-            </AnimatedBackground>
+                ))
+            })()}
           </div>
         </motion.section>
       )}

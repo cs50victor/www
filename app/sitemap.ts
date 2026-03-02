@@ -1,29 +1,8 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-
-async function getNoteSlugs(dir: string) {
-  const entries = await fs.readdir(dir, {
-    recursive: true,
-    withFileTypes: true,
-  });
-  return entries
-    .filter((entry) => entry.isFile() && entry.name === 'page.mdx')
-    .map((entry) => {
-      const relativePath = path.relative(
-        dir,
-        path.join(entry.path, entry.name)
-      );
-      return path.dirname(relativePath);
-    })
-    .map((slug) => slug.replace(/\\/g, '/'));
-}
+import { ALL_WRITINGS } from './_w';
 
 export default async function sitemap() {
-  const writingDirectory = path.join(process.cwd(), 'app', 't');
-  const slugs = await getNoteSlugs(writingDirectory);
-
-  const notes = slugs.map((slug) => ({
-    url: `https://vic.so/t/${slug}`,
+  const notes = ALL_WRITINGS.map((post) => ({
+    url: `https://vic.so${post.slug}`,
     lastModified: new Date().toISOString(),
   }));
 
@@ -31,6 +10,6 @@ export default async function sitemap() {
     url: `https://vic.so${route}`,
     lastModified: new Date().toISOString(),
   }));
-  
+
   return [...routes, ...notes];
 }
