@@ -1,6 +1,17 @@
 // This file is auto-generated. Do not edit it manually.
 export const ALL_WRITINGS = [
   {
+    "slug": "/t/claude-remote-control",
+    "title": "Reverse-Engineering Claude Code Remote Control",
+    "description": "I pointed Claude at itself and asked it to figure out how remote control works. Here is everything we found.",
+    "date": "03/02/2026",
+    "hero": true,
+    "tags": [
+      "tech",
+      "reverse engineering"
+    ]
+  },
+  {
     "slug": "/t/what-a-time-to-be-alive",
     "title": "What a Time to Be Alive.",
     "description": "A reflection on growing up dreaming about the future and waking up in it.",

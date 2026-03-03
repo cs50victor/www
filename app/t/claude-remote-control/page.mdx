@@ -1,0 +1,677 @@
+export const metadata = {
+  title: 'Reverse-Engineering Claude Code Remote Control',
+  description: 'I pointed Claude at itself and asked it to figure out how remote control works. Here is everything we found.',
+  tags: ["tech", "reverse engineering"],
+  hero: true,
+  date: "03/02/2026",
+};
+
+# Reverse-Engineering Claude Code Remote Control
+
+I ran `claude remote-control` for the first time last week. A URL appeared in my terminal. I opened it in my browser. Suddenly I was talking to Claude in a web UI, but it was reading files and running commands on my laptop. No port forwarding, no SSH tunnel, no ngrok. Just a URL.
+
+That bothered me. Not because it didn't work, it worked perfectly, but because I couldn't see the seams. What was actually happening between my browser and my machine? What protocol? What auth? What was the binary doing on disk and on the network while I wasn't looking?
+
+So I did what any reasonable person would do: I asked Claude to help me reverse-engineer itself.
+
+---
+
+## The Setup
+
+The investigation ran entirely inside tmux. I had Claude Code in one pane, `claude remote-control` running in another, and a third pane for tracing. Claude drove the research, I steered.
+
+The approach combined four techniques, all standard macOS debugging tools applied to a locally running process:
+
+1. **`fs_usage`** for real-time syscall tracing (filesystem + network)
+2. **Debug log discovery** from the trace output
+3. **`strings`** on the Mach-O binary for embedded constants and API endpoints
+4. **Public source research** for context and confirmation
+
+Nothing here requires special access. If you have Claude Code installed, you can reproduce everything.
+
+---
+
+## Tracing the Process
+
+First, I had Claude start `remote-control` in a tmux window and find its PID:
+
+```bash
+tmux new-window -n "claude-rc" -d
+tmux send-keys -t "claude-rc" "claude remote-control" C-m
+sleep 3
+pgrep -f "claude remote-control"
+# 77197
+```
+
+Then we attached `fs_usage` to watch every filesystem and network syscall:
+
+```bash
+sudo fs_usage -f filesys,network -w 77197 2>&1 | tee /tmp/claude-rc-trace.log
+```
+
+Within seconds, something interesting showed up. The process was writing to a debug log:
+
+```
+access    /Users/vic8or/.claude/debug/003d2900-5462-4627-a7df-b1f5476fc2b5.txt
+openat    /Users/vic8or/.claude/debug/003d2900-5462-4627-a7df-b1f5476fc2b5.txt
+write     B=0x60
+close
+```
+
+That file turned out to be the entire application-level debug log, API calls, payloads, session IDs, protocol state transitions. All in plain text.
+
+---
+
+## What Remote Control Actually Is
+
+`claude remote-control` is a **local bridge daemon**. It registers with Anthropic's API, then relays messages between the web UI at claude.ai/code and a local Claude Code process that executes tool calls on your machine.
+
+```
++------------------+       HTTPS/WSS        +---------------------+       HTTPS/WSS        +----------------+
+|  Browser/App     | <--------------------> |  Anthropic API      | <--------------------> |  Your Machine  |
+|  claude.ai/code  |                        |  api.anthropic.com  |                        |  claude remote |
++------------------+                        +---------------------+                        +----------------+
+                                                                                            |
+                                                                                            | fork()
+                                                                                            v
+                                                                                    +------------------+
+                                                                                    | Child claude     |
+                                                                                    | (session worker) |
+                                                                                    | --sdk-url wss:// |
+                                                                                    +------------------+
+```
+
+Two modes exist. **Standalone bridge** (`claude remote-control`) runs as a separate process and spawns child `claude` processes for each session. **In-REPL bridge** (`/remote-control` or `/rc` inside an existing session) runs in-process and shares the existing session.
+
+---
+
+## The Full Protocol, Phase by Phase
+
+### Phase 1: Initialization
+
+When `claude remote-control` starts, it generates a random `bridgeId` (UUID v4), a placeholder `environmentId`, and collects machine metadata:
+
+```
+[bridge:init] bridgeId=3733d745-b5e3-44cb-b614-15f78e459221
+              environmentId=a113f31a-d9bb-4334-9cd5-4fb1d9bfc5f0
+              dir=/private/tmp branch=HEAD gitRepoUrl=null machine=mac-3.local
+[bridge:init] apiBaseUrl=https://api.anthropic.com sessionIngressUrl=https://api.anthropic.com
+[bridge:init] sandbox=false
+```
+
+### Phase 2: Bridge Registration
+
+The bridge registers with Anthropic:
+
+```
+POST https://api.anthropic.com/v1/environments/bridge
+```
+
+Headers:
+
+```
+Authorization: Bearer {oauth_token}
+Content-Type: application/json
+anthropic-version: 2023-06-01
+anthropic-beta: environments-2025-11-01
+x-environment-runner-version: 2.1.63
+```
+
+Request body:
+
+```json
+{
+  "machine_name": "mac-3.local",
+  "directory": "/private/tmp",
+  "branch": "HEAD",
+  "git_repo_url": null
+}
+```
+
+Response:
+
+```json
+{
+  "environment_id": "env_01Agq6rhxDSSmAeUfRrYyFFX",
+  "organization_uuid": "8d62f517-d869-4ded-b5ad-14fb4ff039b2",
+  "environment_secret": "sk-ant-o...zQAA"
+}
+```
+
+The server-assigned `environment_id` (with `env_` prefix) replaces the local placeholder. The `environment_secret` authenticates subsequent polling. The bridge then creates an initial session and outputs the connection URL:
+
+```
+https://claude.ai/code/session_01Q9Wkj4ZeXqZfAug5oT8TeT?bridge=env_01Agq6rhxDSSmAeUfRrYyFFX
+```
+
+### Phase 3: Work Polling
+
+The bridge enters a long-poll loop:
+
+```
+GET https://api.anthropic.com/v1/environments/{environment_id}/work/poll
+Authorization: Bearer {environment_secret}
+```
+
+When idle, polls return empty every ~30 seconds. When a user connects through the browser, the response contains a work item:
+
+```json
+{
+  "id": "work_01Q9Wkj4ZeXqZfAug5oT8TeT",
+  "type": "work",
+  "state": "queued",
+  "data": {
+    "type": "session",
+    "id": "session_01Q9Wkj4ZeXqZfAug5oT8TeT"
+  },
+  "actor": {
+    "type": "user_actor",
+    "email_address": "vic8orr@gmail.com",
+    "user_id": "user_01T18Dyy1TbqsvkWrG8E3mFX"
+  },
+  "secret": "eyJ2ZXJz...fX0=",
+  "created_at": "2026-03-02T09:56:32.630416Z"
+}
+```
+
+The `secret` field is a base64-encoded encrypted blob containing the session ingress token (a JWT with `sk-ant-si-...` prefix).
+
+When already at capacity (1 concurrent session max), the bridge logs:
+
+```
+[bridge:work] At capacity (1/1), skipping workId=work_01Q9Wkj4ZeXqZfAug5oT8TeT
+```
+
+### Phase 4: Session Spawning
+
+When work arrives, the bridge forks a child `claude` process:
+
+```bash
+claude --print \
+  --sdk-url wss://api.anthropic.com/v1/session_ingress/ws/session_01Q9Wkj4ZeXqZfAug5oT8TeT \
+  --session-id session_01Q9Wkj4ZeXqZfAug5oT8TeT \
+  --input-format stream-json \
+  --output-format stream-json \
+  --replay-user-messages
+```
+
+`--sdk-url` is an internal, undocumented flag. It does not appear in `claude --help`. It tells the child to connect to Anthropic's session ingress WebSocket instead of reading from stdin.
+
+Environment variables on the child:
+
+| Variable | Value | Purpose |
+|----------|-------|---------|
+| `CLAUDE_CODE_ENVIRONMENT_KIND` | `bridge` | Marks this as a bridge worker |
+| `CLAUDE_CODE_SESSION_ACCESS_TOKEN` | `{token}` | Session ingress token |
+| `CLAUDE_CODE_POST_FOR_SESSION_INGRESS_V2` | `1` | Enables HTTP POST fallback transport |
+| `CLAUDE_CODE_FORCE_SANDBOX` | `1` | When `--sandbox` flag is used |
+| `CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR` | `{fd}` | Alternative token delivery via FD |
+
+### Phase 5: WebSocket Data Plane
+
+The child connects to:
+
+```
+wss://api.anthropic.com/v1/session_ingress/ws/{session_id}
+```
+
+Authenticated with the session ingress JWT. Claims structure:
+
+```json
+{
+  "iss": "session-ingress",
+  "aud": ["anthropic-api"],
+  "session_id": "session_abc123",
+  "organization_uuid": "8d62f517-...",
+  "account_uuid": "...",
+  "account_email": "user@example.com",
+  "application": "ccr"
+}
+```
+
+This WebSocket carries bidirectional `stream-json` messages. Inbound: user messages and control requests from the web UI. Outbound: Claude's responses, tool call results, status updates.
+
+There is also an HTTP POST fallback (`/v1/sessions/{session_id}/ingress/v2`) for when WebSocket connections are unreliable.
+
+### Phase 6: Steady State
+
+Once a session is live, we could see three concurrent patterns in the `fs_usage` trace.
+
+**Network I/O (every ~30s)** -- the poll loop continues checking for new sessions:
+
+```
+01:57:17.890011  sendto   F=13  B=0x21c    claude.7536788
+01:57:19.317273  recvfrom F=13  B=0xdd8    claude.7536788
+```
+
+**Debug log writes (every ~1-2s):**
+
+```
+01:57:15.134149  access   /Users/vic8or/.claude/debug/003d2900-...txt
+01:57:15.134200  openat   /Users/vic8or/.claude/debug/003d2900-...txt
+01:57:15.134241  write    B=0x60
+01:57:15.134323  close
+01:57:15.134673  WrData[A] /dev/disk3s5  ...debug/003d2900-...txt
+```
+
+**Config reloads (every ~30s):**
+
+```
+01:57:49.734222  stat64   /Users/vic8or/.claude.json
+01:57:49.734568  openat   /Users/vic8or/.claude.json
+01:57:49.734701  read     B=0x40000
+01:57:49.734797  read     B=0x496e    # 18,798 bytes
+01:57:49.734812  close
+```
+
+Session status is also polled every ~2 seconds:
+
+```
+[bridge:api] GET /v1/sessions/session_01Q9Wkj4ZeXqZfAug5oT8TeT
+```
+
+### Phase 7: Token Refresh
+
+Session ingress tokens expire after ~4 hours. The bridge schedules a refresh 5 minutes early:
+
+```
+[bridge:token] Scheduled token refresh for sessionId=session_01Q9Wkj4ZeXqZfAug5oT8TeT
+               in 3h 54m 55s (expires=2026-03-02T13:56:39.000Z, buffer=300s)
+```
+
+When the refresh fires, the bridge writes a JSON message to the child's stdin:
+
+```json
+{"type": "token_update", "token": "{new_sk-ant-si-..._token}"}
+```
+
+### Phase 8: Shutdown
+
+On SIGINT, the bridge performs a graceful teardown. Here is the full sequence from both the debug log and the syscall trace:
+
+```
+10:04:53.560Z  SIGINT received
+10:04:53.565Z  SIGTERM sent to child pid=77374
+10:04:53.582Z  Child exited (interrupted, duration=8m 10s)
+10:04:53.583Z  POST .../work/{work_id}/stop force=true
+10:04:54.084Z  POST .../work/{work_id}/stop -> 200
+10:04:54.084Z  POST /v1/sessions/{session_id}/archive
+10:04:54.237Z  DELETE /v1/environments/bridge/{env_id}
+```
+
+And the corresponding syscalls:
+
+```
+02:04:53.556817  read     F=12  B=0x1      # Signal byte from self-pipe
+02:04:53.560857  write    F=5   B=0x4      # Write to child's stdin
+02:04:53.583751  sendto   F=13  B=0x254    # POST to stop work
+02:04:54.085182  sendto   F=13  B=0x227    # POST to archive session
+02:04:54.239412  sendto   F=13  B=0x226    # DELETE to deregister
+02:04:55.325050  exit                       # Process exit
+```
+
+Stop the work, archive the session, deregister the bridge, exit. Clean.
+
+---
+
+## How Conversations Continue
+
+This was the part I found most interesting. The bridge is not a request/response relay. It maintains persistent, stateful conversations.
+
+### Standalone Bridge
+
+The child `claude` process is **long-lived**. It is spawned once when work arrives and stays alive for the entire session (up to 24 hours).
+
+```
+Bridge (parent)                          Child claude (pid 77374)
+    |                                         |
+    |-- fork + exec with --sdk-url ---------> |
+    |                                         |-- connect WSS to session_ingress
+    |                                         |
+    |                                         |<-- user message via WebSocket
+    |                                         |--- Claude API call (thinking)
+    |                                         |--> assistant response via WebSocket
+    |                                         |
+    |                                         |<-- second user message via WebSocket
+    |                                         |--- Claude API call (with full history)
+    |                                         |--> assistant response via WebSocket
+    |                                         |
+    |                                    [stays alive]
+```
+
+The child works exactly like `claude --print` with `--input-format stream-json --output-format stream-json`. The WebSocket acts as a bidirectional pipe replacing stdin/stdout. Each new user message arrives as a JSON line. The child's internal `mutableMessages` array accumulates the full conversation history in memory, same as any interactive Claude Code session.
+
+From the binary:
+
+```javascript
+this.mutableMessages = config.initialMessages ?? [];
+```
+
+New messages arrive via the WebSocket, get appended, and the full history is sent to the Claude API on each turn.
+
+### In-REPL Bridge
+
+This is more interesting because it needs to sync an **existing** conversation to a remote client. When you type `/rc` in an active session, the bridge initializes with the current conversation state:
+
+```javascript
+initReplBridge({
+  initialMessages: messages,
+  previouslyFlushedUUIDs: set,
+  onStateChange: callback,
+  ...
+})
+```
+
+When a remote client connects, the bridge performs an **initial flush**, sending the existing conversation history so the remote user can see what happened before they connected:
+
+```javascript
+writeMessages(messages) {
+  let filtered = messages.filter(m => m.type === "user" || m.type === "assistant");
+  // send to transport
+}
+```
+
+There is a cap on this flush to avoid overwhelming the connection:
+
+```
+[bridge:repl] Capped initial flush: 47 -> 20 (cap=20)
+```
+
+Messages that arrive during the flush get queued and drained after:
+
+```
+[bridge:repl] Queued 3 message(s) during initial flush
+[bridge:repl] Drained 3 pending message(s) after flush
+```
+
+Each message has a UUID for deduplication (ring buffer of 2,000 UUIDs).
+
+### Reconnection
+
+If the WebSocket drops (network issue, laptop sleep), the in-REPL bridge reconnects:
+
+1. Detects the disconnect
+2. Re-registers the environment (`POST /v1/environments/bridge`)
+3. Re-creates the session
+4. Performs another initial flush of the current conversation state
+5. Clears the dedup set so messages can be re-sent
+6. Drains any messages that queued during reconnection
+
+```
+[bridge:repl] Reconnecting env+session (attempt 1/3)
+[bridge:repl] Re-registered environment: env_01...
+[bridge:repl] Re-created session: session_01...
+```
+
+For the standalone bridge, the child process dies on disconnect and a new one is spawned on reconnect. The server-side session retains the conversation history, and `--replay-user-messages` ensures the new child process re-emits user messages on stdout so the server can reconcile what was already sent.
+
+| | Standalone bridge | In-REPL bridge |
+|--|------------------|----------------|
+| Conversation state lives in | Child process memory | REPL process memory |
+| New messages arrive via | WebSocket JSON line to child | WebSocket JSON line in-process |
+| History maintained by | Child stays alive; array grows | Same REPL session; initial flush syncs remote |
+| On reconnect | New child spawned; server replays history | Re-register + re-flush existing messages |
+| Message dedup | Server-side (by UUID) | Client-side ring buffer (2,000 UUIDs) |
+
+The conversation never "restarts." It is either kept alive in a persistent process or replayed from memory on reconnect.
+
+---
+
+## The Complete API Surface
+
+### Bridge API Endpoints
+
+All endpoints use `https://api.anthropic.com`.
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| `POST` | `/v1/environments/bridge` | OAuth token | Register bridge |
+| `GET` | `/v1/environments/{env_id}/work/poll` | Env secret | Long-poll for work |
+| `POST` | `/v1/environments/{env_id}/work/{work_id}/ack` | Env secret | Acknowledge work |
+| `POST` | `/v1/environments/{env_id}/work/{work_id}/stop` | Env secret | Stop work item |
+| `DELETE` | `/v1/environments/bridge/{env_id}` | OAuth token | Deregister bridge |
+| `GET` | `/v1/sessions/{session_id}` | OAuth token | Session status |
+| `POST` | `/v1/sessions/{session_id}/archive` | OAuth token | Archive session |
+| `POST` | `/v1/sessions/{session_id}/events` | OAuth token | Send events |
+
+### WebSocket Endpoint
+
+| Protocol | Endpoint | Auth |
+|----------|----------|------|
+| `wss://` | `/v1/session_ingress/ws/{session_id}` | Session ingress JWT (`sk-ant-si-...`) |
+
+### HTTP Fallback (v2)
+
+| Method | Endpoint | Auth |
+|--------|----------|------|
+| `GET` | `/v1/session_ingress/session/{session_id}` | Session ingress JWT |
+| `POST` | `/v1/sessions/{session_id}/ingress/v2` | Session ingress JWT |
+
+### Browser-Side Session API
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| `POST` | `/v1/sessions` | Create session |
+| `GET` | `/v1/sessions` | List sessions |
+| `GET` | `/v1/sessions/{id}` | Get session |
+| `PATCH` | `/v1/sessions/{id}` | Modify session |
+| `GET` | `/v1/sessions/{id}/events` | Read history |
+| `DELETE` | `/v1/sessions/{id}` | Delete session |
+
+### Required Headers
+
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+anthropic-version: 2023-06-01
+anthropic-beta: environments-2025-11-01
+x-environment-runner-version: 2.1.63
+```
+
+---
+
+## Three-Tier Authentication
+
+The bridge uses three distinct tokens, each scoped to a different layer.
+
+**Layer 1: OAuth Token (`sk-ant-oat01-...`)**
+Source: claude.ai subscription login. Scope: account-wide. Used for bridge registration, deregistration, session management. Standard OAuth refresh flow.
+
+**Layer 2: Environment Secret (`sk-ant-o...`)**
+Source: returned from bridge registration. Scope: single bridge environment. Used only for work polling. Lifetime: until deregistration or 24 hours.
+
+**Layer 3: Session Ingress Token (`sk-ant-si-...`)**
+Source: encrypted in the `secret` field of each work item. Scope: single session. Used for WebSocket auth. Lifetime: ~4 hours, auto-refreshed via stdin JSON to the child process.
+
+This layering means a compromised session token cannot poll for new work, and a compromised environment secret cannot access existing sessions. Each layer can only do what its scope allows.
+
+---
+
+## Protocol Constants
+
+Extracted via `strings` on the Mach-O binary:
+
+```
+BRIDGE_MAX_LIFETIME_MS          = 86400000     # 24h max bridge lifetime
+DEFAULT_SESSION_TIMEOUT_MS      = 86400000     # 24h max session lifetime
+POLL_BLOCK_MS                   = 900          # Long-poll block timeout
+POLL_TIMEOUT_MS                 = 10000        # HTTP timeout for polls
+STATUS_UPDATE_INTERVAL_MS       = 1000         # Session status check
+MAX_STDERR_LINES                = 50           # Stderr buffer from child
+MAX_ACTIVITIES                  = 100          # Activity entries tracked
+UUID_DEDUP_CAPACITY             = 2000         # Ring buffer for message dedup
+maxSessions                     = 1            # One concurrent session
+Token refresh buffer            = 300s         # Refresh 5min before expiry
+```
+
+### Error Retry Policy
+
+| Category | Initial Delay | Max Delay | Give Up After |
+|----------|--------------|-----------|---------------|
+| Connection errors (ECONNREFUSED, ECONNRESET, ETIMEDOUT) | 2s | 2min | 10min |
+| General/API errors | 500ms | 30s | 10min |
+
+Sleep detection: if the gap between polls exceeds a threshold, error budgets reset. This handles laptop sleep/wake gracefully.
+
+---
+
+## Child Process Control Protocol
+
+The bridge communicates with child processes via stdin (JSON lines) and monitors stdout for control requests.
+
+### Bridge to Child (stdin)
+
+```json
+{"type": "token_update", "token": "sk-ant-si-...new_token..."}
+```
+
+### Child to Bridge (stdout)
+
+```json
+{
+  "type": "control_request",
+  "request": {
+    "subtype": "can_use_tool",
+    "request_id": "...",
+    ...
+  }
+}
+```
+
+Supported control request subtypes: `initialize`, `set_model`, `set_max_thinking_tokens`, `interrupt`, `can_use_tool`.
+
+---
+
+## Files on Disk
+
+Everything the process touches, from the `fs_usage` trace:
+
+### Written
+
+| File | Frequency | Purpose |
+|------|-----------|---------|
+| `~/.claude/debug/{uuid}.txt` | Every ~1-2s | Debug log (append-only) |
+
+### Read
+
+| File | Frequency | Purpose |
+|------|-----------|---------|
+| `~/.claude.json` | Every ~30s | Config reload |
+| `/private/var/db/timezone/tz/2025c.1.0/zoneinfo/America/Los_Angeles` | On shutdown | Timezone data |
+| `/usr/share/icu/icudt78l/*.res` | On shutdown | ICU locale resources |
+
+### File Descriptors
+
+| FD | Type | Purpose |
+|----|------|---------|
+| 13 | TCP socket | HTTPS to api.anthropic.com |
+| 12 | Pipe | Self-pipe for signal handling |
+| 5 | Pipe | Child stdin |
+
+---
+
+## Known Issues
+
+### The `--sdk-url` Bug on npm Installs
+
+When Claude Code is installed via `npm install -g @anthropic-ai/claude-code`, the bridge spawns the child as `node --print --sdk-url wss://...` instead of `node /path/to/claude-script.js --print --sdk-url wss://...`. Node interprets `--sdk-url` as a V8 flag and crashes with exit code 9. The Homebrew Cask binary does not have this problem.
+
+Tracked in GitHub issues [#28747](https://github.com/anthropics/claude-code/issues/28747), [#29161](https://github.com/anthropics/claude-code/issues/29161), [#29152](https://github.com/anthropics/claude-code/issues/29152), [#28938](https://github.com/anthropics/claude-code/issues/28938).
+
+### Feature Gating
+
+- Feature flag: `tengu_ccr_bridge`
+- Organization policy: `allow_remote_sessions`
+- Requires claude.ai Max plan subscription (Pro coming soon)
+- API keys not supported
+- Team/Enterprise plans not yet supported
+
+---
+
+## Research Methodology
+
+Everything in this post came from four techniques. None require special access. If you have Claude Code installed, you can reproduce all of it.
+
+### `strings` on the Binary
+
+`strings` extracts printable character sequences (4+ ASCII chars by default) from binary files. The `claude` binary at `/opt/homebrew/Caskroom/claude-code/2.1.63/claude` is a compiled Mach-O executable, but it contains embedded JavaScript source (minified and bundled) plus string literals like log messages, error text, and API paths.
+
+```bash
+# Extract all strings of 30+ chars
+strings -n 30 /opt/homebrew/Caskroom/claude-code/2.1.63/claude > /tmp/claude-strings-long.txt
+
+# Search for specific patterns
+grep "bridge:repl" /tmp/claude-strings-long.txt
+grep "initialMessages" /tmp/claude-strings-long.txt
+grep "writeMessages" /tmp/claude-strings-long.txt
+grep "initial flush" /tmp/claude-strings-long.txt
+```
+
+This revealed the `writeMessages` function (filters to user+assistant types), the `initReplBridge` initialization (takes `initialMessages` and `previouslyFlushedUUIDs`), the initial flush capping logic, the message queue drain, and the reconnection flow.
+
+### Debug Log Discovery
+
+Running `claude remote-control` writes a debug log to `~/.claude/debug/{uuid}.txt`. This file contains timestamped application-level events including every API call with request/response payloads.
+
+```bash
+ls ~/.claude/debug/
+cat ~/.claude/debug/<latest-uuid>.txt
+```
+
+This showed the exact sequence: registration, session creation, poll loop, child spawning with `--sdk-url`, session status monitoring, and the graceful shutdown sequence. Look for these prefixes:
+
+- `[bridge:init]` -- startup configuration
+- `[bridge:api]` -- all HTTP requests/responses with payloads
+- `[bridge:session]` -- child process management
+- `[bridge:token]` -- token lifecycle
+- `[bridge:work]` -- work item processing
+- `[bridge:shutdown]` -- teardown sequence
+
+### `fs_usage` Syscall Tracing
+
+macOS's `fs_usage` traces filesystem and network syscalls for a specific process.
+
+```bash
+# Start remote-control in a tmux window
+tmux new-window -n "claude-rc" -d
+tmux send-keys -t "claude-rc" "claude remote-control" C-m
+
+# Find the PID
+sleep 3
+pgrep -f "claude remote-control"
+
+# Attach syscall trace (requires sudo)
+sudo fs_usage -f filesys,network -w <PID> 2>&1 | tee /tmp/claude-rc-trace.log
+```
+
+This revealed the two-thread architecture (network thread doing `sendto`/`recvfrom` every ~30s, disk thread writing debug log every ~1-2s), the periodic config reload of `~/.claude.json`, and the exact shutdown syscall sequence including signal handling and process cleanup.
+
+In the trace, watch for `sendto`/`recvfrom` on a consistent FD (network I/O), `openat`/`write`/`close` on `~/.claude/debug/` (log writes), and `read`/`write` on low FDs (pipe I/O with child process).
+
+On Linux, replace `fs_usage` with `strace -f -e trace=network,open,openat,read,write,close -p <PID>`.
+
+### Web Research
+
+Public sources that corroborated and extended findings:
+
+| Source | What it provided |
+|--------|------------------|
+| [Official docs](https://code.claude.com/docs/en/remote-control) | High-level feature description, CLI flags |
+| [GitHub #28747](https://github.com/anthropics/claude-code/issues/28747) | `--sdk-url` bug exposing internal args |
+| [Noah Lebovic's security research](https://www.noahlebovic.com/hacking-claude-code-on-the-web-breaking-yolo-mode-sandboxing/) | Token structure, JWT claims |
+| [dev.to architecture analysis](https://dev.to/chwu1946/deep-dive-how-claude-code-remote-control-actually-works-50p6) | Third-party protocol breakdown |
+| [Implementation gist](https://gist.github.com/sorrycc/9b9ac045d5329ac03084a465345b59c3) | Reverse-engineered details, HybridTransport |
+
+---
+
+## References
+
+- [Official Remote Control docs](https://code.claude.com/docs/en/remote-control)
+- [CLI reference](https://code.claude.com/docs/en/cli-reference)
+- [GitHub: --sdk-url bug (#28747)](https://github.com/anthropics/claude-code/issues/28747)
+- [Security research by Noah Lebovic](https://www.noahlebovic.com/hacking-claude-code-on-the-web-breaking-yolo-mode-sandboxing/)
+- [Architecture deep dive on dev.to](https://dev.to/chwu1946/deep-dive-how-claude-code-remote-control-actually-works-50p6)
+- [Simon Willison review](https://simonwillison.net/2026/Feb/25/claude-code-remote-control/)
+
+<EmailList isDev/>
+<EditContact slug="claude-remote-control"/>
