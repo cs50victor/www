@@ -197,8 +197,8 @@ function AnimatedTabsHover() {
                           <span>{post.title}</span>
                           <p className="text-sm text-zinc-400 dark:text-zinc-500 truncate">{post.description}</p>
                         </div>
-                        <span className="text-sm text-zinc-400 dark:text-zinc-500 tabular-nums ml-4 self-start">
-                          {post.day}/{post.month}
+                        <span className="ml-4 self-start text-sm text-zinc-400 tabular-nums dark:text-zinc-500">
+                          {post.month}/{post.day}
                         </span>
                       </Link>
                     ))}
