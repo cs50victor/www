@@ -1,0 +1,25 @@
+export const metadata = {
+  title: "We Only Need MCPs Because We Don't Trust LLMs",
+  description: "MCPs make sense when models are untrusted, but long-term safety should come from sandboxed environments and scoped access.",
+  tags: ["tech", "dev tooling"],
+  hero: false,
+  date: "03/12/2026",
+};
+
+# We Only Need MCPs Because We Don't Trust LLMs
+
+About a year ago, it was hard to trust a model with even the basic mechanics of tool use. It would mangle JSON arguments, call the wrong tool, skip the obvious tool entirely, or need a ridiculous amount of prompt scaffolding just to behave. In that world, the rise of Model Context Protocol (MCP) made perfect sense. If the model itself was unreliable, then the safest move was to strictly define the tools, the arguments, and the surface area it could touch.
+
+That is what most MCPs still feel like to me: a control system for an untrusted actor. They are less about raw capability and more about reducing the blast radius. If the model can only choose from a narrow set of pre-approved operations, it has fewer ways to fail and fewer ways to do something dangerous. That was exactly the right abstraction when the dominant feeling around coding agents was, "I cannot let this thing touch my machine unless I watch every step."
+
+I think that assumption started to break around the Opus 4.5 era. The vibe changed fast. People went from hovering over every tool call to running multiple agent sessions with broad permissions and much less supervision. Not because the models became perfect, but because they became capable enough that the friction of over-constraining them started to feel more expensive than the risk. Once that shift happens, MCPs start to look less like the future of software interfaces and more like a temporary adaptation to a trust problem.
+
+The GitHub example makes this obvious to me. If I hired a competent coworker to help with a repository, I would not build them a GitHub MCP that only exposes `create_issue`, `comment_on_pr`, and `list_commits`. I would give them a token, the GitHub CLI, and whatever repository permissions their role allows. The control point would be authorization, not a tiny hand-curated tool menu. GitHub MCPs exist because we do not fully trust the model that is driving them. They are a wrapper around distrust.
+
+The same thing is true with bash. Bash is scary, but the right response is not to pretend the shell should be replaced by one hundred tiny shell-shaped tools. The right response is to solve permissions, isolation, and recovery. Put the agent in a sandbox. Scope its filesystem access. Limit network access. Gate production credentials. Make destructive actions auditable and reversible. Guard the environment, not every individual hammer inside the toolbox.
+
+That is also why projects like OpenClaw took off at exactly the right moment. As models got better, people wanted fewer rails, not more. They wanted software that let the model actually use its intelligence rather than constantly bouncing off a pile of tool wrappers designed for a weaker generation of systems. The more capable the model gets, the more expensive those wrappers become. You trade away flexibility, improvisation, and sometimes the best solution simply because the tool schema did not anticipate it.
+
+I do not think MCPs disappear completely. There is still real value in standardization, discoverability, and reusing integrations someone else already built. But the current obsession with MCPs as the main safety layer feels transitional. It belongs to a phase where the central problem was "how do I stop this model from going off-script?" If models continue getting more reliable over the next few years, the durable answer will look much closer to infrastructure security than tool choreography.
+
+We only need MCPs in this form because we still do not trust LLMs enough to give them the computer directly.

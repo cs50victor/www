@@ -1,0 +1,27 @@
+export const metadata = {
+  title: "We Only Need MCPs Because We Don't Trust LLMs",
+  description: "MCPs make sense when models are untrusted, but long-term safety should come from sandboxed environments and scoped access.",
+  tags: ["tech", "dev tooling"],
+  hero: false,
+  date: "03/12/2026",
+};
+
+# We Only Need MCPs Because We Don't Trust LLMs
+
+Bash is not the problem. Unbounded access is the problem.
+
+I think that framing clears up a lot of confusion around Model Context Protocol (MCP). Most MCPs are not valuable because they expose some magical new interface. They are valuable because they let people fence in a model they do not fully trust. If the model is weak, brittle, or likely to do something stupid, then constraining it to a carefully designed tool surface is rational. MCPs are, in large part, what safety looks like when you do not trust the actor.
+
+That made a lot of sense a year ago. Models were still bad at the fundamentals of tool use. Getting them to call the right function with the right arguments could feel harder than the task itself. A lot of the energy around agent harnesses came from the same place: if the model could not be trusted with a general interface, then the interface had to be simplified until failure became manageable. The tool wrapper became the safety system.
+
+But I think the center of gravity is moving. Around the Opus 4.5 phase, people started relaxing in a way that would have sounded reckless just months earlier. More autonomous coding sessions. Broader permissions. Less constant babysitting. The models did not become flawless, but they became useful enough that the main bottleneck was no longer "can this thing invoke a tool correctly?" It became "how much power am I willing to let it use?" That is an environment question, not a tool question.
+
+This is how large organizations already think about access. You do not authorize employees by inventing a different interface for every internal system and hiding the real one forever. You give them scoped access to the real systems. Some people can touch production. Some cannot. Some can call one microservice but not another. The control point is authorization, isolation, and policy. It is not a handcrafted wrapper around every possible action. Agents should inherit that model.
+
+The GitHub case makes the same point. I would not give a trusted engineer a GitHub MCP so they could open pull requests through a padded room. I would give them the GitHub CLI and the permissions they need. MCPs are the equivalent of saying, "I want the output of a capable operator, but I do not trust the operator with the actual controls." That can be justified for today's models. I just do not think it is the end state.
+
+The most interesting products of the last year understood this. OpenClaw worked because it matched the moment when people realized the upside of a less constrained agent was finally real. Once models cross a capability threshold, over-limiting them starts to feel like buying a race car and never shifting above second gear. You get safety, but you also leave a lot of usefulness on the table.
+
+So I think the next phase looks different. Put the model in a sandbox. Restrict the filesystem. Gate secrets. Limit network access. Make actions observable, recoverable, and cheap to roll back. Build strong environmental guardrails and let the model operate more generally inside them. If models keep improving for the next two, three, or five years, that design will age better than a universe of tiny tools built around fear.
+
+MCPs in their current form are a temporary answer to a temporary level of distrust.
