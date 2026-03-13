@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "bun run app/_w.generator.ts &&  next dev --turbo --experimental-https",
-    "build": "bun run app/_w.generator.ts && next build",
+    "dev": "bun run app/_w.generator.cli.ts &&  next dev --turbo --experimental-https",
+    "build": "bun run app/_w.generator.cli.ts && next build",
     "start": "next start",
     "lint": "next lint"
   },

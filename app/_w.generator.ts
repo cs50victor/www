@@ -54,7 +54,7 @@ export function extractWritingMetadata(content: string) {
   }
 }
 
-async function generateWritings() {
+export async function generateWritings() {
   const writingsDir = path.join(process.cwd(), 'app', 't')
   const entries = await fs.readdir(writingsDir, {
     recursive: true,
@@ -100,8 +100,4 @@ export const ALL_WRITINGS = ${JSON.stringify(writings, null, 2)} as const;
 `
 
   await fs.writeFile(path.join(process.cwd(), 'app', '_w.ts'), fileContent)
-}
-
-if (import.meta.main) {
-  generateWritings().catch(console.error)
 }
