@@ -10,6 +10,50 @@ export interface WritingPost {
   tags?: string[]
 }
 
+export function extractMetadataString(source: string, key: string) {
+  const match = source.match(
+    new RegExp(`${key}:\\s*("(?:\\\\.|[^"])*"|'(?:\\\\.|[^'])*')`),
+  )
+
+  if (!match) {
+    return undefined
+  }
+
+  return new Function(`return ${match[1]}`)() as string
+}
+
+export function extractWritingMetadata(content: string) {
+  const cleanedMetadata = (content.match(
+    /export const metadata = \{([\s\S]*?)\};/,
+  ) ?? [])[1]
+
+  if (!cleanedMetadata) {
+    return undefined
+  }
+
+  const title = extractMetadataString(cleanedMetadata, 'title')
+  const description = extractMetadataString(cleanedMetadata, 'description')
+  const date = extractMetadataString(cleanedMetadata, 'date')
+  const heroMatch = cleanedMetadata.match(/hero: (true|false)/)
+  const tagsMatch = cleanedMetadata.match(/tags: \[(.*?)\]/)
+
+  if (!(title && description && date)) {
+    return undefined
+  }
+
+  return {
+    title,
+    description,
+    date,
+    hero: heroMatch ? heroMatch[1] === 'true' : false,
+    tags: tagsMatch
+      ? tagsMatch[1]
+          .split(',')
+          .map((tag) => tag.trim().replace(/['"]/g, ''))
+      : undefined,
+  }
+}
+
 async function generateWritings() {
   const writingsDir = path.join(process.cwd(), 'app', 't')
   const entries = await fs.readdir(writingsDir, {
@@ -26,38 +70,19 @@ async function generateWritings() {
     const filePath = path.join(entry.parentPath, entry.name)
     const content = await fs.readFile(filePath, 'utf-8')
 
-    const cleanedMetadata = (content.match(
-      /export const metadata = \{([\s\S]*?)\};/,
-    ) ?? [])[1]
-
-    if (!cleanedMetadata) {
+    const metadata = extractWritingMetadata(content)
+    if (!metadata) {
       const msg = `Missing metadata in ${filePath}`
       console.error(msg)
       // throw Error(msg);
       continue
     }
 
-    const titleMatch = cleanedMetadata.match(/title: ['"](.+?)['"]/)
-    const descriptionMatch = cleanedMetadata.match(/description: ['"](.+?)['"]/)
-    const dateMatch = cleanedMetadata.match(/date: ['"](.+?)['"]/)
-    const heroMatch = cleanedMetadata.match(/hero: (true|false)/)
-    const tagsMatch = cleanedMetadata.match(/tags: \[(.*?)\]/)
-
-    if (titleMatch && descriptionMatch && dateMatch) {
-      const relativePath = path.relative(writingsDir, entry.path)
-      writings.push({
-        slug: `/t/${relativePath}`.replace(/\\/g, '/'),
-        title: titleMatch[1],
-        description: descriptionMatch[1],
-        date: dateMatch[1],
-        hero: heroMatch ? heroMatch[1] === 'true' : false,
-        tags: tagsMatch
-          ? tagsMatch[1]
-              .split(',')
-              .map((tag) => tag.trim().replace(/['"]/g, ''))
-          : undefined,
-      })
-    }
+    const relativePath = path.relative(writingsDir, entry.path)
+    writings.push({
+      slug: `/t/${relativePath}`.replace(/\\/g, '/'),
+      ...metadata,
+    })
   }
 
   // Sort writings by date (newest first)
@@ -77,6 +102,6 @@ export const ALL_WRITINGS = ${JSON.stringify(writings, null, 2)} as const;
   await fs.writeFile(path.join(process.cwd(), 'app', '_w.ts'), fileContent)
 }
 
-// Run the generator
-generateWritings().catch(console.error)
-
+if (import.meta.main) {
+  generateWritings().catch(console.error)
+}
