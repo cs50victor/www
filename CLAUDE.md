@@ -28,6 +28,7 @@ Personal website (vic.so) built with Next.js 15 App Router, React 19, Tailwind C
 - Each post exports `metadata` with title, description, date, optional hero/tags
 - The metadata export **must** end with `};` (semicolon). The generator regex depends on it; without it the post is silently excluded from the listing.
 - `_w.generator.ts` scans posts and generates `_w.ts` (auto-generated, do not edit)
+- OG images use `next/og` (satori): images need explicit `width`/`height` (`height: 'auto'` won't work), fonts must be TTF (not woff2), and assets must live in `public/` to work on Vercel
 - Generator runs automatically before dev/build
 
 **Path alias:** `@/*` maps to project root

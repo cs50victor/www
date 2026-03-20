@@ -109,8 +109,8 @@ export default async function Image() {
             >
               <img
                 src={logoSrc}
-                alt="Model Context Protocol logo"
-                style={{ width: '100%', height: 'auto' }}
+                width={340}
+                height={57}
               />
             </div>
           </div>
