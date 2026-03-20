@@ -12,7 +12,7 @@ import { Suspense, useEffect } from 'react'
 import { CursorText } from '@/components/cursor-text'
 import { InfiniteSlider } from '@/components/motion-primitives/infinite-slider'
 import { ALL_WRITINGS } from './_w'
-import { BrutalistWorkGrid } from '@/components/brutalist-work-grid'
+// import { BrutalistWorkGrid } from '@/components/brutalist-work-grid'
 import { ChromePreloader } from '@/components/chrome-preloader'
 
 const VARIANTS_CONTAINER = {
@@ -90,7 +90,7 @@ export default function HomePage() {
 }
 
 function AnimatedTabsHover() {
-  const TABS = ['About', 'Fun', 'Thoughts', 'Experience', 'Contact'] as const;
+  const TABS = ['About', /* 'Fun', */ 'Thoughts', 'Experience', 'Contact'] as const;
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || TABS[0];
@@ -152,7 +152,7 @@ function AnimatedTabsHover() {
         </motion.section>
       )}
       
-      {activeTab === TABS[1] && (
+      {/* {activeTab === 'Fun' && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
@@ -162,9 +162,9 @@ function AnimatedTabsHover() {
         >
           <BrutalistWorkGrid />
         </motion.section>
-      )}
-      
-      {activeTab === TABS[2] && (
+      )} */}
+
+      {activeTab === TABS[1] && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
@@ -209,7 +209,7 @@ function AnimatedTabsHover() {
         </motion.section>
       )}
       
-      {activeTab === TABS[3] && (
+      {activeTab === TABS[2] && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
@@ -254,7 +254,7 @@ function AnimatedTabsHover() {
         </motion.section>
       )}
       
-      {activeTab === TABS[4] && (
+      {activeTab === TABS[3] && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
