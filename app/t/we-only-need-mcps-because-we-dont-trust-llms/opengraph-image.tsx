@@ -83,17 +83,6 @@ export default async function Image() {
               >
                 {TITLE}
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  fontSize: 26,
-                  lineHeight: 1.35,
-                  color: '#555555',
-                  maxWidth: '92%',
-                }}
-              >
-                {DESCRIPTION}
-              </div>
             </div>
 
             <div
