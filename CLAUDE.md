@@ -26,6 +26,7 @@ Personal website (vic.so) built with Next.js 15 App Router, React 19, Tailwind C
 **Blog system:**
 - Posts live in `app/t/<slug>/page.mdx`
 - Each post exports `metadata` with title, description, date, optional hero/tags
+- The metadata export **must** end with `};` (semicolon). The generator regex depends on it; without it the post is silently excluded from the listing.
 - `_w.generator.ts` scans posts and generates `_w.ts` (auto-generated, do not edit)
 - Generator runs automatically before dev/build
 
