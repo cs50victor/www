@@ -21,10 +21,9 @@ const DATE = '03/12/2026'
 
 export default async function Image() {
   const logoData = await readFile(
-    join(process.cwd(), 'app/t/_assets/mcp-logo-light.png'),
-    'base64',
+    join(process.cwd(), 'public/images/mcp-logo-light.png'),
   )
-  const logoSrc = `data:image/png;base64,${logoData}`
+  const logoSrc = `data:image/png;base64,${logoData.toString('base64')}`
 
   return new ImageResponse(
     (
