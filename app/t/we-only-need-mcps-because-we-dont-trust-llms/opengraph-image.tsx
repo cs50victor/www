@@ -15,14 +15,14 @@ export const size = {
 export const contentType = 'image/png'
 
 const TITLE = "We Only Need MCPs Because We Don't Trust LLMs"
-const DESCRIPTION =
-  'MCPs make sense when models are untrusted, but long-term safety should come from sandboxed environments and scoped access.'
-const DATE = '03/12/2026'
 
 export default async function Image() {
-  const logoData = await readFile(
-    join(process.cwd(), 'public/images/mcp-logo-light.png'),
-  )
+  const [logoData, gowunBold] = await Promise.all([
+    readFile(join(process.cwd(), 'public/images/mcp-logo-light.png')),
+    fetch(
+      'https://fonts.gstatic.com/s/gowunbatang/v12/ijwNs5nhRMIjYsdSgcMa3wRZ4J7awg.ttf',
+    ).then((res) => res.arrayBuffer()),
+  ])
   const logoSrc = `data:image/png;base64,${logoData.toString('base64')}`
 
   return new ImageResponse(
@@ -35,7 +35,7 @@ export default async function Image() {
           backgroundColor: '#ffffff',
           padding: '32px',
           color: '#111111',
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: 'Gowun Batang, serif',
         }}
       >
         <div
@@ -59,18 +59,6 @@ export default async function Image() {
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  fontSize: 22,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: '#666666',
-                  marginBottom: '28px',
-                }}
-              >
-                Thoughts / {DATE}
-              </div>
               <div
                 style={{
                   display: 'flex',
@@ -131,6 +119,14 @@ export default async function Image() {
     ),
     {
       ...size,
+      fonts: [
+        {
+          name: 'Gowun Batang',
+          data: gowunBold,
+          weight: 700,
+          style: 'normal',
+        },
+      ],
     },
   )
 }
