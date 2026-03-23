@@ -1,9 +1,10 @@
 import './globals.css'
+import Script from 'next/script'
 import type { Metadata, Viewport } from 'next'
 import { Footer } from './footer'
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from 'next-themes'
-import { Geist, Geist_Mono, Gowun_Batang, Mona_Sans, Bebas_Neue } from 'next/font/google';
+import { Geist, Geist_Mono, EB_Garamond, Mona_Sans, Bebas_Neue } from 'next/font/google';
 import { WEBSITE_URL } from '@/lib/constants'
 import localFont from 'next/font/local';
 
@@ -62,10 +63,9 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
-const gowun = Gowun_Batang({
+const ebGaramond = EB_Garamond({
   variable: '--font-geist-serif',
   subsets: ['latin'],
-  weight: ['400', '700']
 });
 
 // todo use later
@@ -98,9 +98,18 @@ export default function RootLayout({
   return (
       <html
         lang="en"
-        className={`${geistMono.variable} ${geistSans.variable} ${gowun.variable} ${monaSans.variable} ${bebasNeue.variable} tracking-tight antialiased`}
+        className={`${geistMono.variable} ${geistSans.variable} ${ebGaramond.variable} ${monaSans.variable} ${bebasNeue.variable} tracking-tight antialiased`}
         suppressHydrationWarning
       >
+        <head>
+          {process.env.NODE_ENV === "development" && (
+            <Script
+              src="//unpkg.com/react-grab/dist/index.global.js"
+              crossOrigin="anonymous"
+              strategy="beforeInteractive"
+            />
+          )}
+        </head>
         <body
           className="bg-white dark:bg-[#0F0F10]"
         >

@@ -5,7 +5,7 @@ import { NAME } from '@/lib/constants'
 
 export const runtime = 'nodejs'
 
-export const alt = "We Only Need MCPs Because We Don't Trust LLMs"
+export const alt = "We only need MCPs because we don't trust LLMs"
 
 export const size = {
   width: 1200,
@@ -14,13 +14,13 @@ export const size = {
 
 export const contentType = 'image/png'
 
-const TITLE = "We Only Need MCPs Because We Don't Trust LLMs"
+const TITLE = "We only need MCPs because we don't trust LLMs"
 
 export default async function Image() {
-  const [logoData, gowunBold] = await Promise.all([
+  const [logoData, ebGaramondBold] = await Promise.all([
     readFile(join(process.cwd(), 'public/images/mcp-logo-light.png')),
     fetch(
-      'https://fonts.gstatic.com/s/gowunbatang/v12/ijwNs5nhRMIjYsdSgcMa3wRZ4J7awg.ttf',
+      'https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-6_RUA4V-e6yHgQ.ttf',
     ).then((res) => res.arrayBuffer()),
   ])
   const logoSrc = `data:image/png;base64,${logoData.toString('base64')}`
@@ -35,7 +35,7 @@ export default async function Image() {
           backgroundColor: '#ffffff',
           padding: '32px',
           color: '#111111',
-          fontFamily: 'Gowun Batang, serif',
+          fontFamily: 'EB Garamond, serif',
         }}
       >
         <div
@@ -121,9 +121,9 @@ export default async function Image() {
       ...size,
       fonts: [
         {
-          name: 'Gowun Batang',
-          data: gowunBold,
-          weight: 700,
+          name: 'EB Garamond',
+          data: ebGaramondBold,
+          weight: 400,
           style: 'normal',
         },
       ],

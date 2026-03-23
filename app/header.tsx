@@ -7,7 +7,7 @@ export function Header() {
     <header className="mb-8 flex items-center justify-between font-serif">
       <Link
         href="/"
-        className="text-muted-background text-2xl font-extrabold tracking-tighter lowercase"
+        className="text-muted-background text-2xl font-medium tracking-tighter lowercase"
       >
         {NAME}
       </Link>
