@@ -2,7 +2,7 @@
 export const ALL_WRITINGS = [
   {
     "slug": "/t/we-only-need-mcps-because-we-dont-trust-llms",
-    "title": "We Only Need MCPs Because We Don't Trust LLMs",
+    "title": "We only need MCPs because we don't trust LLMs",
     "description": "MCPs make sense when models are untrusted, but long-term safety should come from sandboxed environments and scoped access.",
     "date": "03/12/2026",
     "hero": false,
