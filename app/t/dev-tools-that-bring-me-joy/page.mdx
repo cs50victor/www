@@ -1,0 +1,16 @@
+export const metadata = {
+  title: 'A couple dev tools that bring be joy',
+  description:
+    'A short note on the dev tools I keep recommending because they make it easier to close the loop.',
+  tags: ['tech', 'dev tooling'],
+  hero: false,
+  date: '04/04/2026',
+};
+
+# A couple dev tools that bring be joy
+
+I've been using [uv](https://docs.astral.sh/uv/), [just](https://github.com/casey/just), [gh](https://cli.github.com/), [sentry-cli](https://docs.sentry.io/cli/), and [depot](https://depot.dev/) for a while now. They are all useful on their own, but they become way more useful when you pair them with [agents](/t/no-handbook) because they make it easier to gather context, inspect state, and close the loop without constantly bouncing between apps.
+
+[uv](https://docs.astral.sh/uv/) has been really good for quick Python scripts. `uv run --script` is great, and I do not miss manually setting up virtualenvs. [just](https://github.com/casey/just) is great in repos that mix a few different tools because it gives you one clean place for the commands you actually run. [gh](https://cli.github.com/) and [sentry-cli](https://docs.sentry.io/cli/) fit the same pattern for me too. They make it easy to inspect GitHub Actions, PRs, issues, traces, and logs from the terminal, and an agent can just go pull that context directly.
+
+[depot](https://depot.dev/) is probably the biggest unlock out of the bunch. Remote Docker builds save a lot of time, especially for heavy Rust builds and large images, and they keep my laptop from getting crushed. [Depot CI](https://depot.dev/products/ci) also looks really promising, and honestly it is a bigger deal than I can explain, because running CI against local changes is way better than doing the usual push, wait, fail loop over and over again. The only caveat for me right now is that the `depot` CLI works everywhere, but native Depot CI still does not seem to support macOS or Windows yet. Once that changes, it is a much easier recommendation.
