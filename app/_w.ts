@@ -2,7 +2,7 @@
 export const ALL_WRITINGS = [
   {
     "slug": "/t/dev-tools-that-bring-me-joy",
-    "title": "A couple dev tools that bring be joy",
+    "title": "A couple dev tools that bring me joy",
     "description": "A short note on the dev tools I keep recommending because they make it easier to close the loop.",
     "date": "04/04/2026",
     "hero": false,
