@@ -2,11 +2,12 @@ import type { MDXComponents } from 'mdx/types'
 import Image from 'next/image'
 import { CodeBlockContent } from './components/kibo-ui/code-block/server'
 import type { BundledLanguage } from 'shiki'
-import Link from 'next/link'
+import { BlogLink } from './components/blog-link'
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     ...components,
+    a: BlogLink,
 
     img: ({ gray = true, ...props }: any) => (
       <Image
@@ -19,15 +20,16 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     pre: ({ children }) => {
       const codeContent =
-        typeof children?.props?.children === 'string' ?
-          children?.props?.children?.trimEnd()
-          : ""
-      const language = (children?.props?.className?.replace("language-","") ?? "plaintext") as BundledLanguage
+        typeof children?.props?.children === 'string'
+          ? children?.props?.children?.trimEnd()
+          : ''
+      const language = (children?.props?.className?.replace('language-', '') ??
+        'plaintext') as BundledLanguage
       return (
-        <div className="my-4 overflow-hidden rounded-md border bg-secondary/30">
+        <div className="bg-secondary/30 my-4 overflow-hidden rounded-md border">
           <CodeBlockContent
             language={language}
-            className="[&_pre]:p-4 [&_pre]:overflow-x-auto [&_.line]:block [&_code]:text-sm"
+            className="[&_.line]:block [&_code]:text-sm [&_pre]:overflow-x-auto [&_pre]:p-4"
           >
             {codeContent}
           </CodeBlockContent>
@@ -52,7 +54,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
               sizes="100vw"
               width={1024}
               height={526}
-              className="h-full w-full border object-cover rounded-sm"
+              className="h-full w-full rounded-sm border object-cover"
             />
           </div>
           <figcaption className="text-foreground/20 mt-0 text-center text-xs">
@@ -61,23 +63,19 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         </figure>
       )
     },
-    EmailList: ({
-      isDev = false,
-    }: {
-      isDev?: boolean
-    }) => {
+    EmailList: ({ isDev = false }: { isDev?: boolean }) => {
       const src = isDev
-        ? "https://vibecoderesponsibly.substack.com/embed"
-        : "https://vicdotso.substack.com/embed"
+        ? 'https://vibecoderesponsibly.substack.com/embed'
+        : 'https://vicdotso.substack.com/embed'
 
       return (
         <>
-          <span className='block py-6 opacity-0'>{"_"}</span>
+          <span className="block py-6 opacity-0">{'_'}</span>
           <iframe
             src={src}
             // width="480"
             // height="320"
-            className="w-full h-full my-9 border border-[#EEE] rounded-sm"
+            className="my-9 h-full w-full rounded-sm border border-[#EEE]"
             // style={{ background: "black !important" }}
           />
         </>
@@ -85,22 +83,16 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     },
     EditContact: ({ slug }: { slug: string }) => {
       return (
-        <div className="flex gap-2 text-sm w-full items-center justify-center">
-          <Link
+        <div className="flex w-full items-center justify-center gap-2 text-sm">
+          <BlogLink
             href={`https://github.com/cs50victor/www/edit/main/app/t/${slug}/page.mdx`}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline-offset-6"
           >
             propose a change
-          </Link>
+          </BlogLink>
           <span>/</span>
-          <Link
-            href="https://vic.so/?tab=Contact"
-            className="underline-offset-6"
-          >
-            give feedback
-          </Link>
+          <BlogLink href="https://vic.so/?tab=Contact">give feedback</BlogLink>
         </div>
       )
     },
