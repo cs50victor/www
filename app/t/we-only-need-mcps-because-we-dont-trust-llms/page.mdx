@@ -27,20 +27,56 @@ export const metadata = {
 
 # We only need MCPs because we don't trust LLMs
 
-> A model with shell access inside a disposable sandbox, with limited files, no sensitive credentials, controlled network access, and good rollback mechanisms, is a much saner design than a model trapped behind dozens of tiny pseudo-tools pretending not to be a shell.
+If a new engineer joined your team and needed to work on GitHub, you would not give them a tiny GitHub-shaped toy interface. You would install Git, install the GitHub CLI, grant the right permissions, and expect them to learn the real tools.
 
-If a new coworker joined your project tomorrow and asked for help working on GitHub, you would not hand them a GitHub MCP. You would have them install Git and the GitHub CLI, and make sure their account has the right permissions. That is how we treat teammates. We do not build tiny artificial tool surfaces for them and force them to operate through a layer of wrappers just because the raw interface feels scary.
+We treat language models differently because we do not trust them yet.
 
-That contrast explains what *most* MCP servers actually are. They are trust boundaries, not breakthroughs in interface design. They exist because the model sitting behind the keyboard is not trusted enough to have broad, direct access to the environment.
+That is the hidden premise behind most MCP servers. They are not mainly breakthroughs in interface design. They are trust boundaries. They exist because the model behind the keyboard is not trusted with the same broad environment a human engineer would get.
 
-A year ago, that approach was obviously correct. Models were tripping over basic tool use, getting stuck in loops, calling the wrong tools. Of course you want a narrow interface if the model cannot reliably drive a broad one. But the capability curve moved fast. Around the Opus 4.5 moment, people who once refused to let a model run code locally began spinning up multiple agent sessions with far fewer restrictions. The default posture shifted from "watch every move" to "let it run and intervene if needed." That is a very different relationship, and it exposes the limits of the current MCP worldview.
+That was the right tradeoff for a while. Models got stuck in loops, called the wrong tools, lost track of state, and confidently damaged things they did not understand. A narrow tool surface made sense when the operator was unreliable.
 
-The limit is simple: tool-level control is not how we usually secure powerful systems. We do not protect a company by inventing one API per acceptable behavior and hoping nobody colors outside the lines. We protect it with authorization, sandboxing, network boundaries, audit trails, and scoped credentials. We decide what a person or service can reach, not which exact verbs they are allowed to think with. The same principle should apply to agents.
+But the capability curve moved. Around the Opus 4.5 moment, people who would never have allowed a model to run code locally started launching multiple coding agents with fewer restrictions. The default posture shifted from "approve every move" to "let it work in a sandbox and inspect the result." Once that shift happens, the old MCP philosophy starts to look less like safety and more like friction.
 
-Bash is the best example. People talk about bash as if the shell itself is dangerous. The shell is fine. Unbounded access is the problem. Give a model shell access inside a disposable sandbox, with limited files, no sensitive credentials, controlled network access, and good rollback mechanisms, and you have a much saner design than dozens of tiny pseudo-tools pretending not to be a shell. The real safety layer should live in the environment.
+## The safety layer belongs in the environment
 
-That is also why products like [OpenClaw](https://github.com/openclaw/openclaw) arrived at the right time. As models became more competent, users started wanting fewer handrails. Not because they stopped caring about safety, but because they wanted the upside of a more general system. Every time you narrow the tool surface, you limit the model's ability to solve problems creatively.
+Tool-level control is not how we usually secure powerful systems.
 
-Humans have always shared tools on computers through apps or CLIs. MCPs introduced a third way. A few lines of config give your model tools another developer built, no new CLIs to install. Remote MCPs mean you skip downloading untrusted code into the agent's harness entirely. But the protocol was not designed with progressive disclosure in mind. Every tool call ships the full schema, like reading an app's entire help page on every single interaction. That has room to improve, [which it seems to be](https://www.anthropic.com/engineering/advanced-tool-use).
+We do not protect a company by inventing one API for every acceptable human behavior. We use authorization, scoped credentials, audit trails, network boundaries, disposable environments, and rollback. We decide what a person or service can reach. We do not try to predefine every verb they are allowed to think with.
 
-I strongly believe that once we figure out the right abstractions for agent authentication, authorization, and checkpointing, on both user machines and servers, most MCPs as we know them will disappear. As a safety philosophy, they are a bridge technology from the era when models were too brittle to trust. The lasting pattern will be better sandboxes, not smaller tools.
+Agents should follow the same model.
+
+Bash is the clearest example. People talk about shell access as if the shell itself is the dangerous part. It is not. Unbounded access is dangerous. Give a model shell access on your laptop, with your home directory, private keys, production credentials, and unrestricted network, and you deserve the blast radius you created.
+
+Give that same model shell access inside a disposable sandbox, with a small mounted workspace, no sensitive credentials, controlled network access, logging, and rollback, and the shape changes. The model gets a general tool. The system keeps the boundary.
+
+That is a better design than dozens of tiny pseudo-tools pretending not to be a shell.
+
+## MCPs still solve a real problem
+
+MCPs are useful because they make tools easy to share.
+
+A few lines of config can give a model access to a service another developer wrapped. Remote MCPs can avoid downloading arbitrary code into the agent harness. A well-designed MCP can expose a narrow, stable, authenticated surface around a product API.
+
+That is real value. It is just not the same thing as the future of agent interfaces.
+
+The weakness is context and rigidity. Many MCPs hand the model a large set of tools, each with a schema the model has to carry around. Some servers expose thirty verbs where four commands would do. Others wrap a CLI that was already a better interface. The model pays for the abstraction every turn.
+
+The protocol can improve. Progressive disclosure helps. Better tool loading helps. But that only addresses part of the issue. The deeper question is whether a model should be trapped behind tiny verbs at all.
+
+## Smaller tools are not the end state
+
+The durable pattern is not "give the model less interface." The durable pattern is "give the model a real environment with real boundaries."
+
+Products like [OpenClaw](https://github.com/openclaw/openclaw) arrived at the right time because they match what users are learning from stronger models: they want fewer handrails in the tool layer and stronger guarantees in the execution layer. They want a system that can explore, write code, run commands, inspect output, and recover from mistakes.
+
+That does not mean every model should get every tool. It means the boundary should be explicit. A model should know what files it can touch, what network it can reach, what credentials exist, how work is logged, and how changes are reverted. The safety model should survive even when the model uses a general tool creatively.
+
+## The bridge technology
+
+Most MCPs will not disappear overnight. They solve distribution, auth, and integration problems that are still awkward. They are especially useful for services that do not have good CLIs or where the API surface needs a product-owned contract.
+
+But as a safety philosophy, MCPs are bridge technology.
+
+They belong to the era when models were too brittle to trust with a normal computing environment. As models get more competent, the interesting work moves down a layer: sandboxing, checkpointing, scoped credentials, auditability, and agent auth.
+
+The future is not smaller tools. It is better rooms to let the model work in.
