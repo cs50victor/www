@@ -1,0 +1,33 @@
+# Writing benchmark source pages
+
+Generated: 2026-05-18
+Purpose: Landing pages for writers I want to study without committing the repo to a giant per-post URL inventory.
+
+## My published / live writing
+
+- Victor A. blog index - https://vic.so/t
+- Local published posts - app/t/*/page.mdx
+
+## Writers to study
+
+- Thorsten Ball blog - https://thorstenball.com/blog/
+- Armin Ronacher / lucumr - https://lucumr.pocoo.org/
+- Armin Ronacher about page - https://lucumr.pocoo.org/about/
+- Sean Goedecke blog - https://www.seangoedecke.com/
+- Sean Goedecke: Do the simplest thing that could possibly work - https://www.seangoedecke.com/the-simplest-thing-that-could-possibly-work/
+
+## Representative posts sampled for the style guide
+
+- Thorsten Ball: Professional Programming: The First 10 Years - https://thorstenball.com/blog/2022/05/17/professional-programming-the-first-10-years/
+- Thorsten Ball: How can you not be romantic about programming? - https://thorstenball.com/blog/2020/09/08/how-can-you-not-be-romantic-about-programming/
+- Thorsten Ball: No, typing can be the bottleneck - https://thorstenball.com/blog/2020/09/01/typing-can-be-the-bottleneck/
+- Thorsten Ball: What I didn't do to write a book - https://thorstenball.com/blog/2017/01/16/what-i-didnt-do-to-write-a-book/
+- Armin Ronacher: Absurd In Production - https://lucumr.pocoo.org/2026/4/4/absurd-in-production/
+- Armin Ronacher: The Final Bottleneck - https://lucumr.pocoo.org/2026/2/13/the-final-bottleneck/
+- Armin Ronacher: Agent Design Is Still Hard - https://lucumr.pocoo.org/2025/11/21/agents-are-hard/
+- Armin Ronacher: Build It Yourself - https://lucumr.pocoo.org/2025/1/24/build-it-yourself/
+- Sean Goedecke: Writing a tech blog people want to read - https://www.seangoedecke.com/on-writing/
+- Sean Goedecke: Do the simplest thing that could possibly work - https://www.seangoedecke.com/the-simplest-thing-that-could-possibly-work/
+- Sean Goedecke: Everything I know about good system design - https://www.seangoedecke.com/good-system-design/
+- Sean Goedecke: How I ship projects at big tech companies - https://www.seangoedecke.com/how-to-ship/
+- Sean Goedecke: Great software design looks underwhelming - https://www.seangoedecke.com/great-software-design/

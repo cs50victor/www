@@ -7,7 +7,7 @@ type Props  = {
 
 // Known posts for build-time metadata generation
 const KNOWN_POSTS = [
-  'to-think',
+  // 'to-think', // unpublished: page.mdx renamed to page.mdx.draft
   'no-handbook',
 ]
 

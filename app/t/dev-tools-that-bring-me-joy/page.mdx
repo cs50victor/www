@@ -9,8 +9,46 @@ export const metadata = {
 
 # A couple dev tools that bring me joy
 
-I've been using [uv](https://docs.astral.sh/uv/), [just](https://github.com/casey/just), [gh](https://cli.github.com/), [sentry-cli](https://docs.sentry.io/cli/), and [depot](https://depot.dev/) for a while now. They are all useful on their own, but they become way more useful when you pair them with [agents](/t/no-handbook) because they make it easier to gather context, inspect state, and close the loop without constantly bouncing between apps.
+The best developer tools in my setup all do the same thing: they shorten the distance between a question and a verified answer.
 
-[uv](https://docs.astral.sh/uv/) has been really good for quick Python scripts. `uv run --script` is great, and I do not miss manually setting up virtualenvs. [just](https://github.com/casey/just) is great in repos that mix a few different tools because it gives you one clean place for the commands you actually run. [gh](https://cli.github.com/) and [sentry-cli](https://docs.sentry.io/cli/) fit the same pattern for me too. They make it easy to inspect GitHub Actions, PRs, issues, traces, and logs from the terminal, and an agent can just go pull that context directly.
+That matters more now that I work with coding agents. An agent is only useful if it can inspect the world, make a change, and prove what happened. Tools that were already good for humans become much more valuable when they give an agent a clean surface for gathering context and closing the loop.
 
-[depot](https://depot.dev/) is probably the biggest unlock out of the bunch. Remote Docker builds save a lot of time, especially for heavy Rust builds and large images, and they keep my laptop from getting crushed. [Depot CI](https://depot.dev/products/ci) also looks really promising, and honestly it is a bigger deal than I can explain, because running CI against local changes is way better than doing the usual push, wait, fail loop over and over again. The only caveat for me right now is that the `depot` CLI works everywhere, but native Depot CI still does not seem to support macOS or Windows yet. Once that changes, it is a much easier recommendation.
+The pattern is simple. I want tools that work from the terminal, expose real state, compose with scripts, and fail in ways I can inspect. I do not want tools that require me to click through five dashboards before I can answer "what changed?"
+
+## uv
+
+[uv](https://docs.astral.sh/uv/) is the tool I reach for when I need Python without ceremony.
+
+The killer feature is not speed by itself. The useful part is that `uv run --script` lets a one-off Python file carry its own dependencies and execute cleanly. That turns Python back into a sharp local tool instead of a small project management event.
+
+This matters with agents because Python is often the fastest way to inspect data, rewrite a generated file, parse a log, or test a hypothesis. If running that script requires explaining virtualenv state first, the loop is already worse.
+
+## just
+
+[just](https://github.com/casey/just) gives a repo a small command surface.
+
+Most real projects have a mess of commands: `bun`, `pnpm`, `cargo`, `uv`, `docker`, `fly`, `gh`, random scripts, and a few incantations everyone forgets. A `Justfile` does not make the project simpler, but it makes the operational interface legible.
+
+That is the important distinction. The goal is not to hide complexity. The goal is to put the commands people actually run in one place, with names that match the workflow. Agents benefit from that for the same reason new teammates do: they can read the local interface before guessing.
+
+## gh and sentry-cli
+
+[gh](https://cli.github.com/) and [sentry-cli](https://docs.sentry.io/cli/) are useful because they make remote state inspectable from the same place I edit code.
+
+When a GitHub Action fails, I want the logs next to the diff. When a production issue comes in, I want the event, release, suspect commit, and stack trace in the terminal. Switching to a web dashboard is fine for exploration, but it is a bad default for repeatable investigation.
+
+The terminal versions also make the work easier to audit. The command that gathered evidence can be rerun. The output can be pasted into a PR. The agent can fetch the same context I would fetch, instead of asking me to summarize a screenshot.
+
+## depot
+
+[depot](https://depot.dev/) is the one that changes the most time.
+
+Remote Docker builds are not glamorous. They just remove a lot of waiting. That is enough. Heavy Rust builds and large images can crush a laptop, and they make local iteration feel expensive. Moving that work off-machine gives me back a clean feedback loop.
+
+[Depot CI](https://depot.dev/products/ci) is interesting for the same reason. Running CI against local changes is a better shape than pushing, waiting, failing, making a tiny fix, and pushing again. The constraint right now is platform coverage: the `depot` CLI works well, but native Depot CI still is not a blanket answer for macOS or Windows workflows.
+
+## The common thread
+
+I like these tools because they reduce uncertainty without adding much ceremony.
+
+They do not ask me to adopt a new worldview. They give me a command I can run, output I can inspect, and a faster path from "I wonder" to "I know." That is the kind of tool that compounds. It helps me, it helps an agent, and it leaves a trail another engineer can follow.

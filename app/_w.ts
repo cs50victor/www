@@ -32,15 +32,5 @@ export const ALL_WRITINGS = [
       "tech",
       "dev tooling"
     ]
-  },
-  {
-    "slug": "/t/to-think",
-    "title": "Struggling to Think.",
-    "description": "A personal reflection on the importance of writing for clear thinking.",
-    "date": "03/01/2025",
-    "hero": false,
-    "tags": [
-      "tech"
-    ]
   }
 ] as const;

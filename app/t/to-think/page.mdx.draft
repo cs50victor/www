@@ -1,0 +1,77 @@
+export const metadata = {
+  title: 'Struggling to Think',
+  description: 'A personal reflection on the importance of writing for clear thinking.',
+  tags: ["tech"],
+  hero: false,
+  date: "03/01/2025",
+};
+
+# Struggling to Think
+
+> Brain: "Did you work in tech?"
+>
+> Brain: No. That is a strange first question.
+>
+> Brain: "Are you a software engineer?"
+>
+> Brain: Maybe ask whether they studied computer science.
+
+I spent almost three hours on a flight sitting next to someone I wanted to talk to, and I could not get a normal question out of my head.
+
+The problem was not that I had nothing to say. I had too many half-formed options. Every sentence arrived with a correction attached to it. Too broad. Too awkward. Too technical. Too personal. By the time I found a better version, the moment had passed.
+
+That flight made an uncomfortable thing obvious: unclear writing and unclear speaking often come from the same place. The thought exists, but it has not been forced into shape.
+
+## The Class I Thought I Did Not Need
+
+In high school, English class felt less concrete than math or biology.
+
+If I memorized a formula, practiced derivatives, or learned the bones in a part of the body, the feedback loop made sense. Effort became correctness. Writing felt different. Everyone agreed that some essays were better than others, but the line between good and excellent felt subjective.
+
+So when I went into computer science, I expected relief. I thought the serious work would be code, systems, algorithms, and technical skill. Writing assignments felt like leftovers from a different discipline.
+
+That was a narrow view.
+
+Software engineering is full of prose. Design docs, pull request descriptions, incident reviews, RFCs, runbooks, support notes, architecture comments, specs, and Slack messages all decide whether the code can be understood by other people. The code matters, but the explanation around the code determines how far the work travels.
+
+## Code Does Not Remove The Need For Language
+
+The rise of code-generating models makes writing more important, not less.
+
+If an LLM can produce a plausible implementation quickly, the hard part shifts toward deciding what should be built, what constraints matter, and how to judge the result. That work is language-heavy. You have to define the problem, name the tradeoff, explain the failure mode, and describe the test that would prove the change.
+
+This is not separate from engineering. It is engineering.
+
+The more senior the work gets, the more often the artifact is a clear decision rather than a clever function. A strong engineer can still write code, but they also write the sentence that unblocks the team: "we should fail open here because the feature is rate limiting, not auth." That sentence carries technical judgment.
+
+## Writing Forces A Shape
+
+I started taking writing more seriously after two things stuck with me.
+
+The first came from a history course. Groups that could not preserve knowledge across people and time kept losing ground. Writing was not decoration. It was infrastructure for memory.
+
+The second was Paul Graham's essay ["Writing, Briefly"](https://www.paulgraham.com/writes.html), especially the Leslie Lamport line:
+
+> If you're thinking without writing, you only think you're thinking.
+
+I had to sit with that one.
+
+My default mode is to let thoughts run in the background. They feel alive in my head, but that is not the same as understanding them. A thought can feel complete until it has to survive a paragraph. Then the gaps appear. The vague noun needs a concrete example. The confident claim needs a boundary. The clever sentence does not actually say anything.
+
+That is the value of writing. It turns private fog into something inspectable.
+
+## The Missing Practice
+
+The awkward flight conversation was not only social anxiety. It was a symptom of not practicing the conversion from thought to language.
+
+Writing is that practice under slower conditions. You get to pause, reorder, delete, and try again. You get to notice when the idea is doing real work and when it is just circling itself. You get to build the habit of saying the thing plainly.
+
+That habit transfers. It changes how you write docs, how you review code, how you ask questions, how you explain a bug, and how you talk to someone sitting next to you for three hours.
+
+I used to think writing was something engineers did after the real work. I now think writing is part of how the real work becomes clear.
+
+This blog is my way of practicing that in public.
+
+<EmailList />
+
+<EditContact slug="to-think"/>
