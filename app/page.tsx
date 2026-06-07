@@ -90,7 +90,7 @@ export default function HomePage() {
 }
 
 function AnimatedTabsHover() {
-  const TABS = ['About', /* 'Fun', */ 'Thoughts', 'Experience', 'Contact'] as const;
+  const TABS = ['About', /* 'Fun', */ 'Experience', 'Contact'] as const;
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || TABS[0];
@@ -164,7 +164,7 @@ function AnimatedTabsHover() {
         </motion.section>
       )} */}
 
-      {activeTab === TABS[1] && (
+      {false && activeTab === 'Thoughts' && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
@@ -209,7 +209,7 @@ function AnimatedTabsHover() {
         </motion.section>
       )}
       
-      {activeTab === TABS[2] && (
+      {activeTab === 'Experience' && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"
@@ -217,7 +217,7 @@ function AnimatedTabsHover() {
           transition={TRANSITION_SECTION}
           key="experience-section"
         >
-          <div className="flex flex-col space-y-3 max-w-11/12 mx-auto">
+          <div className="group/list flex flex-col max-w-11/12 mx-auto">
             <div className='mb-10'>
               <InfiniteSlider speedOnHover={20} gap={24}>
                 {WORK_EXPERIENCE.map(({img_src, company}, index) => (
@@ -232,7 +232,7 @@ function AnimatedTabsHover() {
             </div>
             {WORK_EXPERIENCE.map(({link, title, company, achievement_summary, start, end}, i) => (
               <a
-                className="relative overflow-hidden p-[1px] border-b hover:bg-foreground/5 hover:rounded-xl"
+                className="relative overflow-hidden border-b p-[1px] py-3 transition-opacity duration-300 group-hover/list:opacity-20 hover:!opacity-100"
                 href={link}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -254,7 +254,7 @@ function AnimatedTabsHover() {
         </motion.section>
       )}
       
-      {activeTab === TABS[3] && (
+      {activeTab === 'Contact' && (
         <motion.section
           variants={VARIANTS_SECTION}
           initial="hidden"

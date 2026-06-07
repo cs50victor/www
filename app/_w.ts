@@ -1,46 +1,4 @@
 // This file is auto-generated. Do not edit it manually.
-export const ALL_WRITINGS = [
-  {
-    "slug": "/t/dev-tools-that-bring-me-joy",
-    "title": "A couple dev tools that bring me joy",
-    "description": "A short note on the dev tools I keep recommending because they make it easier to close the loop.",
-    "date": "04/04/2026",
-    "hero": false,
-    "tags": [
-      "tech",
-      "dev tooling"
-    ]
-  },
-  {
-    "slug": "/t/we-only-need-mcps-because-we-dont-trust-llms",
-    "title": "We only need MCPs because we don't trust LLMs",
-    "description": "MCPs make sense when models are untrusted, but long-term safety should come from sandboxed environments and scoped access.",
-    "date": "03/12/2026",
-    "hero": false,
-    "tags": [
-      "tech",
-      "dev tooling"
-    ]
-  },
-  {
-    "slug": "/t/no-handbook",
-    "title": "There Is No Handbook",
-    "description": "On building mental models and navigating uncertainty in the age of coding agents.",
-    "date": "10/21/2025",
-    "hero": true,
-    "tags": [
-      "tech",
-      "dev tooling"
-    ]
-  },
-  {
-    "slug": "/t/to-think",
-    "title": "Struggling to Think.",
-    "description": "A personal reflection on the importance of writing for clear thinking.",
-    "date": "03/01/2025",
-    "hero": false,
-    "tags": [
-      "tech"
-    ]
-  }
-] as const;
+import type { WritingPost } from './_w.generator'
+
+export const ALL_WRITINGS = [] as readonly WritingPost[];

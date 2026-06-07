@@ -10,6 +10,8 @@ export interface WritingPost {
   tags?: string[]
 }
 
+const PUBLISHED_WRITING_SLUGS = new Set<string>()
+
 export function extractMetadataString(source: string, key: string) {
   const match = source.match(
     new RegExp(`${key}:\\s*("(?:\\\\.|[^"])*"|'(?:\\\\.|[^'])*')`),
@@ -67,6 +69,13 @@ export async function generateWritings() {
     if (!(entry.isFile() && entry.name === 'page.mdx')) {
       continue
     }
+    const relativePath = path.relative(writingsDir, entry.path)
+    const slug = `/t/${relativePath}`.replace(/\\/g, '/')
+
+    if (!PUBLISHED_WRITING_SLUGS.has(slug)) {
+      continue
+    }
+
     const filePath = path.join(entry.parentPath, entry.name)
     const content = await fs.readFile(filePath, 'utf-8')
 
@@ -78,9 +87,8 @@ export async function generateWritings() {
       continue
     }
 
-    const relativePath = path.relative(writingsDir, entry.path)
     writings.push({
-      slug: `/t/${relativePath}`.replace(/\\/g, '/'),
+      slug,
       ...metadata,
     })
   }
@@ -91,12 +99,14 @@ export async function generateWritings() {
   )
 
   // If no hero is set, set the first element as hero
-  if (!writings.some((w) => w.hero)) {
+  if (writings.length > 0 && !writings.some((w) => w.hero)) {
     writings[0].hero = true
   }
 
   const fileContent = `// This file is auto-generated. Do not edit it manually.
-export const ALL_WRITINGS = ${JSON.stringify(writings, null, 2)} as const;
+import type { WritingPost } from './_w.generator'
+
+export const ALL_WRITINGS = ${JSON.stringify(writings, null, 2)} as readonly WritingPost[];
 `
 
   await fs.writeFile(path.join(process.cwd(), 'app', '_w.ts'), fileContent)
